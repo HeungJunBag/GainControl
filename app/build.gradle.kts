@@ -74,4 +74,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
 
     implementation("androidx.compose.runtime:runtime-livedata:1.3.0")
+
+    // Compose Material3 라이브러리
+    implementation("androidx.compose.material3:material3:1.0.1")
+
+    // Compose Icons 라이브러리 (Material Icons)
+    implementation("androidx.compose.material:material-icons-extended:1.4.3")
 }
