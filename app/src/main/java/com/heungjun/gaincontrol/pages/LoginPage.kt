@@ -55,7 +55,7 @@ fun LoginPage(modifier: Modifier = Modifier,navController: NavController,authVie
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Login", fontSize = 32.sp)
+        Text(text = "Login Page", fontSize = 32.sp)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -65,7 +65,7 @@ fun LoginPage(modifier: Modifier = Modifier,navController: NavController,authVie
                 email = it
             },
             label = {
-                Text(text = "이메일")
+                Text(text = "Email")
             }
         )
 
@@ -77,7 +77,7 @@ fun LoginPage(modifier: Modifier = Modifier,navController: NavController,authVie
                 password = it
             },
             label = {
-                Text(text = "비밀번호")
+                Text(text = "Password")
             }
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -87,7 +87,7 @@ fun LoginPage(modifier: Modifier = Modifier,navController: NavController,authVie
         },
             enabled = authState.value != AuthState.Loading
         ) {
-            Text(text = "로그인")
+            Text(text = "Login")
         }
 
 
@@ -96,7 +96,7 @@ fun LoginPage(modifier: Modifier = Modifier,navController: NavController,authVie
         TextButton(onClick = {
             navController.navigate("signup")
         }) {
-            Text(text = "회원가입 하러 가기")
+            Text(text = "Don't have an account, Signup")
         }
 
     }

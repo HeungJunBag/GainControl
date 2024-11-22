@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.heungjun.gaincontrol"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.heungjun.gaincontrol"

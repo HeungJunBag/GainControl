@@ -45,10 +45,7 @@ fun SignupPage(
 
     LaunchedEffect(authState.value) {
         when (authState.value) {
-            is AuthState.Unauthenticated -> {
-                Toast.makeText(context, "회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.", Toast.LENGTH_SHORT).show()
-                navController.navigate("login") // 로그인 페이지로 이동
-            }
+            is AuthState.Authenticated -> navController.navigate("home")
             is AuthState.Error -> Toast.makeText(
                 context,
                 (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT
@@ -63,7 +60,7 @@ fun SignupPage(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Signup", fontSize = 32.sp)
+        Text(text = "Signup Page", fontSize = 32.sp)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -73,7 +70,7 @@ fun SignupPage(
                 email = it
             },
             label = {
-                Text(text = "이메일")
+                Text(text = "Email")
             }
         )
 
@@ -85,7 +82,7 @@ fun SignupPage(
                 password = it
             },
             label = {
-                Text(text = "비밀번호")
+                Text(text = "Password")
             }
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -95,7 +92,7 @@ fun SignupPage(
                 authViewModel.signup(email, password)
             }, enabled = authState.value != AuthState.Loading
         ) {
-            Text(text = "계정 생성")
+            Text(text = "Create account")
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -103,7 +100,7 @@ fun SignupPage(
         TextButton(onClick = {
             navController.navigate("login")
         }) {
-            Text(text = "로그인 하러 가기")
+            Text(text = "Already have an account, Login")
         }
 
     }

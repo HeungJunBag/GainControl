@@ -27,19 +27,17 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
         }
     }
 
-    // 로그아웃 버튼은 설정 페이지에 넣어야함
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "메인홈", fontSize = 32.sp)
+        Text(text = "Home Page", fontSize = 32.sp)
 
         TextButton(onClick = {
             authViewModel.signout()
         }) {
-            Text(text = "로그아웃")
+            Text(text = "Sign out")
         }
     }
-
 }

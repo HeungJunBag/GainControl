@@ -42,19 +42,19 @@ class AuthViewModel : ViewModel() {
             }
     }
 
-    fun signup(email: String, password: String) {
-        if (email.isEmpty() || password.isEmpty()) {
-            _authState.value = AuthState.Error("이메일과 비밀번호를 모두 입력해야 합니다.")
+    fun signup(email : String,password : String){
+
+        if(email.isEmpty() || password.isEmpty()){
+            _authState.value = AuthState.Error("Email or password can't be empty")
             return
         }
         _authState.value = AuthState.Loading
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // 회원가입 완료 시 상태를 Unauthenticated로 변경
-                    _authState.value = AuthState.Unauthenticated
-                } else {
-                    _authState.value = AuthState.Error(task.exception?.message ?: "Something went wrong")
+        auth.createUserWithEmailAndPassword(email,password)
+            .addOnCompleteListener{task->
+                if (task.isSuccessful){
+                    _authState.value = AuthState.Authenticated
+                }else{
+                    _authState.value = AuthState.Error(task.exception?.message?:"Something went wrong")
                 }
             }
     }
@@ -66,6 +66,7 @@ class AuthViewModel : ViewModel() {
 
 
 }
+
 
 sealed class AuthState{
     object Authenticated : AuthState()
