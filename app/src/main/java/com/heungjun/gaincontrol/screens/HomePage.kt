@@ -1,4 +1,4 @@
-package com.heungjun.gaincontrol.pages
+package com.heungjun.gaincontrol.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,8 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.heungjun.gaincontrol.AuthState
-import com.heungjun.gaincontrol.AuthViewModel
+import com.heungjun.gaincontrol.viewmodel.AuthState
+import com.heungjun.gaincontrol.viewmodel.AuthViewModel
 
 @Composable
 fun HomePage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {

@@ -70,14 +70,22 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
 
     implementation("androidx.compose.runtime:runtime-livedata:1.3.0")
+    implementation("androidx.compose.runtime:runtime:1.5.1")
+
 
     // Compose Material3 라이브러리
     implementation("androidx.compose.material3:material3:1.0.1")
 
     // Compose Icons 라이브러리 (Material Icons)
     implementation("androidx.compose.material:material-icons-extended:1.4.3")
+
+    implementation("androidx.compose.material:material:1.5.1")
+    implementation("androidx.compose.material3:material3:1.2.0") // 최신 안정화 버전 사용
 }

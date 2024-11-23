@@ -1,107 +1,180 @@
 package com.heungjun.gaincontrol.pages
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.heungjun.gaincontrol.AuthState
-import com.heungjun.gaincontrol.AuthViewModel
+import com.heungjun.gaincontrol.viewmodel.AuthState
+import com.heungjun.gaincontrol.viewmodel.AuthViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignupPage(
     modifier: Modifier = Modifier,
     navController: NavController,
     authViewModel: AuthViewModel
 ) {
-    var email by remember {
-        mutableStateOf("")
-    }
-
-    var password by remember {
-        mutableStateOf("")
-    }
-
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") } // 비밀번호 확인 필드 추가
     val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
 
+    // 상태에 따라 화면 전환
     LaunchedEffect(authState.value) {
         when (authState.value) {
             is AuthState.Authenticated -> navController.navigate("home")
             is AuthState.Error -> Toast.makeText(
                 context,
-                (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT
+                (authState.value as AuthState.Error).message,
+                Toast.LENGTH_SHORT
             ).show()
-
             else -> Unit
         }
     }
 
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    // 전체 배경
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFFFF8008), // 오렌지
+                        Color(0xFFFFC837)  // 밝은 오렌지
+                    )
+                )
+            )
+            .padding(16.dp)
     ) {
-        Text(text = "Signup Page", fontSize = 32.sp)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = {
-                email = it
-            },
-            label = {
-                Text(text = "Email")
-            }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = {
-                password = it
-            },
-            label = {
-                Text(text = "Password")
-            }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = {
-                authViewModel.signup(email, password)
-            }, enabled = authState.value != AuthState.Loading
+        Column(
+            modifier = modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Create account")
+            // 제목
+            Text(
+                text = "Signup Page",
+                fontSize = 32.sp,
+                color = Color.White
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // 이메일 입력 필드
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text(text = "Email", color = Color.White) },
+                singleLine = true,
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.White,
+                    unfocusedBorderColor = Color.Gray,
+                    focusedLabelColor = Color.White,
+                    unfocusedLabelColor = Color.LightGray,
+//                    textColor = Color.White
+                )
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 비밀번호 입력 필드
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text(text = "Password", color = Color.White) },
+                singleLine = true,
+                shape = RoundedCornerShape(8.dp),
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.White,
+                    unfocusedBorderColor = Color.Gray,
+                    focusedLabelColor = Color.White,
+                    unfocusedLabelColor = Color.LightGray,
+//                    textColor = Color.White
+                )
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 비밀번호 확인 입력 필드
+            OutlinedTextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                label = { Text(text = "Confirm Password", color = Color.White) },
+                singleLine = true,
+                shape = RoundedCornerShape(8.dp),
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.White,
+                    unfocusedBorderColor = Color.Gray,
+                    focusedLabelColor = Color.White,
+                    unfocusedLabelColor = Color.LightGray,
+//                    textColor = Color.White
+                )
+            )
+
+            // 비밀번호 일치 여부 메시지
+            val passwordsMatch = password == confirmPassword
+            Text(
+                text = when {
+                    confirmPassword.isEmpty() -> "" // 비밀번호 확인 필드가 비어있으면 메시지 표시 안 함
+                    passwordsMatch -> "비밀번호가 일치합니다" // 일치하면 연두색 메시지
+                    else -> "비밀번호가 일치하지 않습니다" // 일치하지 않으면 빨간색 메시지
+                },
+                color = if (passwordsMatch) Color(0xFF4CAF50) else Color(0xFFFF5722), // 연두색 또는 빨간색
+                fontSize = 14.sp,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // 회원가입 버튼
+            Button(
+                onClick = {
+                    if (passwordsMatch) {
+                        authViewModel.signup(email, password)
+                    } else {
+                        Toast.makeText(context, "비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                enabled = authState.value != AuthState.Loading,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF8008))
+            ) {
+                Text(
+                    text = "Create Account",
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 로그인 페이지로 이동 버튼
+            TextButton(onClick = { navController.navigate("login") }) {
+                Text(
+                    text = "Already have an account? Login",
+                    color = Color.White
+                )
+            }
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextButton(onClick = {
-            navController.navigate("login")
-        }) {
-            Text(text = "Already have an account, Login")
-        }
-
     }
 }
