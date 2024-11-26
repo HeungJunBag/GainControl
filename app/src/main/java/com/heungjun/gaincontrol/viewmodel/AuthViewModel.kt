@@ -26,7 +26,7 @@ class AuthViewModel : ViewModel() {
 
     fun login(email: String, password: String) {
         if (email.isEmpty() || password.isEmpty()) {
-            _authState.value = AuthState.Error("Email or password can't be empty")
+            _authState.value = AuthState.Error("아이디와 비밀번호 모두 입력해주세요")
             return
         }
         _authState.value = AuthState.Loading
@@ -43,7 +43,7 @@ class AuthViewModel : ViewModel() {
 
     fun signup(email: String, password: String) {
         if (email.isEmpty() || password.isEmpty()) {
-            _authState.value = AuthState.Error("Email or password can't be empty")
+            _authState.value = AuthState.Error("아이디와 비밀번호 모두 입력해주세요")
             return
         }
         _authState.value = AuthState.Loading

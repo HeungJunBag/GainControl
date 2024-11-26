@@ -7,9 +7,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.heungjun.gaincontrol.viewmodel.AuthViewModel
 import com.heungjun.gaincontrol.screens.HomePage
-import com.heungjun.gaincontrol.screens.ProfileScreen
 import com.heungjun.gaincontrol.screens.SettingsScreen
-
+import com.heungjun.gaincontrol.screens.StatisticsScreen
+import com.heungjun.gaincontrol.pages.LoginPage // Import LoginPage
 
 @Composable
 fun BottomNavGraph(
@@ -21,17 +21,29 @@ fun BottomNavGraph(
         navController = navController,
         startDestination = BottomBarScreen.Home.route,
     ) {
+        composable(route = "login") { // Add login route
+            LoginPage(
+                navController = navController,
+                authViewModel = authViewModel
+            )
+        }
         composable(route = BottomBarScreen.Home.route) {
             HomePage(
                 navController = navController,
                 authViewModel = authViewModel // 전달
             )
         }
-        composable(route = BottomBarScreen.Profile.route) {
-            ProfileScreen()
+        composable(route = BottomBarScreen.Statistics.route) {
+            StatisticsScreen(
+                navController = navController,
+                authViewModel = authViewModel // 전달
+            )
         }
         composable(route = BottomBarScreen.Settings.route) {
-            SettingsScreen()
+            SettingsScreen(
+                navController = navController,
+                authViewModel = authViewModel // 전달
+            )
         }
     }
 }

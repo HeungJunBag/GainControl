@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -52,8 +53,9 @@ fun SignupPage(
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFFFF8008), // 오렌지
-                        Color(0xFFFFC837)  // 밝은 오렌지
+                        Color(0xFFFF7E5F), // 오렌지 핑크
+                        Color(0xFFFFA372), // 연한 오렌지
+                        Color(0xFFFFD056)  // 밝은 노란색
                     )
                 )
             )
@@ -66,7 +68,7 @@ fun SignupPage(
         ) {
             // 제목
             Text(
-                text = "Signup Page",
+                text = "Signup",
                 fontSize = 32.sp,
                 color = Color.White
             )
@@ -77,7 +79,7 @@ fun SignupPage(
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text(text = "Email", color = Color.White) },
+                label = { Text(text = "이메일을 입력하세요", color = Color.White) },
                 singleLine = true,
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.fillMaxWidth(),
@@ -96,7 +98,7 @@ fun SignupPage(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text(text = "Password", color = Color.White) },
+                label = { Text(text = "비밀번호를 입력하세요", color = Color.White) },
                 singleLine = true,
                 shape = RoundedCornerShape(8.dp),
                 visualTransformation = PasswordVisualTransformation(),
@@ -116,7 +118,7 @@ fun SignupPage(
             OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
-                label = { Text(text = "Confirm Password", color = Color.White) },
+                label = { Text(text = "비밀번호를 한번 더 입력하세요", color = Color.White) },
                 singleLine = true,
                 shape = RoundedCornerShape(8.dp),
                 visualTransformation = PasswordVisualTransformation(),
@@ -160,7 +162,7 @@ fun SignupPage(
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF8008))
             ) {
                 Text(
-                    text = "Create Account",
+                    text = "계정 생성",
                     fontSize = 18.sp,
                     color = Color.White
                 )
@@ -171,7 +173,130 @@ fun SignupPage(
             // 로그인 페이지로 이동 버튼
             TextButton(onClick = { navController.navigate("login") }) {
                 Text(
-                    text = "Already have an account? Login",
+                    text = "이미 계정이 있으신가요? 로그인 하러 가기",
+                    color = Color.White
+                )
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+@Preview(showBackground = true)
+fun SignupPagePreview() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFFFF7E5F), // 오렌지 핑크
+                        Color(0xFFFFA372), // 연한 오렌지
+                        Color(0xFFFFD056)  // 밝은 노란색
+                    )
+                )
+            )
+            .padding(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "회원가입",
+                fontSize = 32.sp,
+                color = Color.White
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            OutlinedTextField(
+                value = "",
+                onValueChange = {},
+                label = { Text(text = "이메일을 입력하세요", color = Color.White) },
+                singleLine = true,
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.White,
+                    unfocusedBorderColor = Color.Gray,
+                    focusedLabelColor = Color.White,
+                    unfocusedLabelColor = Color.LightGray
+                )
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = "",
+                onValueChange = {},
+                label = { Text(text = "비밀번호를 입력하세요", color = Color.White) },
+                singleLine = true,
+                shape = RoundedCornerShape(8.dp),
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.White,
+                    unfocusedBorderColor = Color.Gray,
+                    focusedLabelColor = Color.White,
+                    unfocusedLabelColor = Color.LightGray
+                )
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = "",
+                onValueChange = {},
+                label = { Text(text = "비밀번호를 한번 더 입력하세요", color = Color.White) },
+                singleLine = true,
+                shape = RoundedCornerShape(8.dp),
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.White,
+                    unfocusedBorderColor = Color.Gray,
+                    focusedLabelColor = Color.White,
+                    unfocusedLabelColor = Color.LightGray
+                )
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {},
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF8008))
+            ) {
+                Text(
+                    text = "계정 생성",
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            TextButton(onClick = {}) {
+                Text(
+                    text = "이미 계정이 있으신가요? 로그인 하러 가기",
                     color = Color.White
                 )
             }
