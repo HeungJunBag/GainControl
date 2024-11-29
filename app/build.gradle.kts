@@ -88,4 +88,7 @@ dependencies {
 
     implementation("androidx.compose.material:material:1.5.1")
     implementation("androidx.compose.material3:material3:1.2.0") // 최신 안정화 버전 사용
+
+    // 로그인, 비밀번호 필드 아이콘 placeholder
+    implementation("androidx.compose.material:material-icons-extended:1.4.3")
 }
