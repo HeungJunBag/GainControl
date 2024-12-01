@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
@@ -80,6 +82,13 @@ fun LoginPage(
                 value = email,
                 onValueChange = { email = it },
                 label = { Text(text = "이메일을 입력하세요", color = Color.White) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Email, // 이메일 아이콘
+                        contentDescription = "Email Icon",
+                        tint = Color.White // 아이콘 색상
+                    )
+                },
                 singleLine = true,
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.fillMaxWidth(),
@@ -88,9 +97,9 @@ fun LoginPage(
                     unfocusedBorderColor = Color.Gray,
                     focusedLabelColor = Color.White,
                     unfocusedLabelColor = Color.LightGray,
-                    cursorColor = Color.White, // 커서 색상
-                    focusedTextColor = Color.White, // 포커스된 텍스트 색상
-                    unfocusedTextColor = Color.White // 포커스되지 않은 텍스트 색상
+                    cursorColor = Color.White,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
                 )
             )
 
@@ -100,6 +109,13 @@ fun LoginPage(
                 value = password,
                 onValueChange = { password = it },
                 label = { Text(text = "비밀번호를 입력하세요", color = Color.White) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Lock, // 비밀번호 아이콘
+                        contentDescription = "Password Icon",
+                        tint = Color.White // 아이콘 색상
+                    )
+                },
                 singleLine = true,
                 shape = RoundedCornerShape(8.dp),
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -121,9 +137,9 @@ fun LoginPage(
                     unfocusedBorderColor = Color.Gray,
                     focusedLabelColor = Color.White,
                     unfocusedLabelColor = Color.LightGray,
-                    cursorColor = Color.White, // 커서 색상
-                    focusedTextColor = Color.White, // 포커스된 텍스트 색상
-                    unfocusedTextColor = Color.White // 포커스되지 않은 텍스트 색상
+                    cursorColor = Color.White,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
                 )
             )
 
