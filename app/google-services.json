@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "684101109793",
+    "project_id": "gaincontrol-75062",
+    "storage_bucket": "gaincontrol-75062.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:684101109793:android:8bc2be0dfc574f83193b60",
+        "android_client_info": {
+          "package_name": "com.heungjun.gaincontrol"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOgfbnG3hR09SM9LD2du-IsulZWpOsu5M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
