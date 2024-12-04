@@ -100,4 +100,7 @@ dependencies {
     //날짜 모듈
     implementation("com.jakewharton.threetenabp:threetenabp:1.4.4")
 
+    // 알림
+    implementation("com.google.firebase:firebase-messaging-ktx:24.1.0")
+
 }

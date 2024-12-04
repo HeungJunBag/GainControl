@@ -1,5 +1,6 @@
 package com.heungjun.gaincontrol.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,21 +30,18 @@ import com.heungjun.gaincontrol.viewmodel.AuthViewModel
 fun SettingsScreen(navController: NavController, authViewModel: AuthViewModel) {
     val authState = authViewModel.authState.observeAsState()
 
-    // 인증되지 않은 경우 로그인 화면으로 리디렉션
     LaunchedEffect(authState.value) {
         if (authState.value is AuthState.Unauthenticated) {
             navController.navigate("login") {
-                popUpTo(0) // 백스택 비우기
+                popUpTo(0)
             }
         }
     }
 
     val settingsOptions = listOf(
         "프로필 설정",
-        "개인정보 및 보안",
-        "알림",
-        "언어",
-        "앱 정보"
+        "공유",
+        "알림", // 클릭 시 알림 대시보드로 이동
     )
 
     GradientBackground {
@@ -53,7 +51,6 @@ fun SettingsScreen(navController: NavController, authViewModel: AuthViewModel) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // 제목
             item {
                 Text(
                     text = "설정",
@@ -62,13 +59,18 @@ fun SettingsScreen(navController: NavController, authViewModel: AuthViewModel) {
                 )
             }
 
-            // 설정 옵션
             items(settingsOptions) { option ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp),
-//                backgroundColor = Color.LightGray
+                    onClick = {
+                        when (option) {
+                            "알림" -> { /* 알림 화면 처리 */ }
+                            "공유" -> { /* 공유 화면 처리 */ }
+                            "프로필 설정" -> { /* 프로필 설정 화면 처리 */ }
+                        }
+                    }
                 ) {
                     Text(
                         text = option,
@@ -80,12 +82,10 @@ fun SettingsScreen(navController: NavController, authViewModel: AuthViewModel) {
                 }
             }
 
-            // 간격 추가
             item {
                 Spacer(modifier = Modifier.height(20.dp))
             }
 
-            // 로그아웃 버튼
             item {
                 Button(
                     onClick = { authViewModel.signout() },
@@ -93,82 +93,14 @@ fun SettingsScreen(navController: NavController, authViewModel: AuthViewModel) {
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF0047AB), // 기본 색상: 코발트 블루
-                        contentColor = Color.White,        // 텍스트 색상: 화이트
-                        disabledContainerColor = Color(0xFFB0C4DE), // 비활성화 색상: 연한 파란색
-                        disabledContentColor = Color(0xFFD3D3D3)    // 비활성화 텍스트 색상: 연한 회색
+                        containerColor = Color(0xFF0047AB),
+                        contentColor = Color.White
                     ),
-                    shape = RoundedCornerShape(12.dp) // 버튼 모서리 둥글게
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text(
-                        text = "로그아웃",
-                        fontSize = 18.sp
-                    )
+                    Text(text = "로그아웃", fontSize = 18.sp)
                 }
             }
         }
     }
-
-//    LazyColumn(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(16.dp),
-//        verticalArrangement = Arrangement.spacedBy(16.dp)
-//    ) {
-//        // 제목
-//        item {
-//            Text(
-//                text = "설정",
-//                fontSize = 24.sp,
-//                modifier = Modifier.padding(bottom = 16.dp)
-//            )
-//        }
-//
-//        // 설정 옵션
-//        items(settingsOptions) { option ->
-//            Card(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = 8.dp),
-////                backgroundColor = Color.LightGray
-//            ) {
-//                Text(
-//                    text = option,
-//                    fontSize = 18.sp,
-//                    modifier = Modifier
-//                        .padding(16.dp)
-//                        .fillMaxWidth()
-//                )
-//            }
-//        }
-//
-//        // 간격 추가
-//        item {
-//            Spacer(modifier = Modifier.height(20.dp))
-//        }
-//
-//        // 로그아웃 버튼
-//        item {
-//            Button(
-//                onClick = { authViewModel.signout() },
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = 16.dp, vertical = 8.dp),
-//                colors = ButtonDefaults.buttonColors(
-//                    containerColor = Color(0xFF0047AB), // 커스텀 버튼 색상 (예: Tomato 색상)
-//                    contentColor = Color.White         // 텍스트 색상
-//                ),
-//                shape = RoundedCornerShape(12.dp)     // 둥근 모서리
-//            ) {
-//                Text(
-//                    text = "로그아웃",
-//                    fontSize = 18.sp
-//                )
-//            }
-//        }
-//    }
 }
-
-
-
-
