@@ -96,8 +96,10 @@ dependencies {
 
     // Firebase 모듈
     implementation("com.google.firebase:firebase-database-ktx") // Realtime Database
+    implementation("com.google.firebase:firebase-firestore:25.1.1")
 
     //날짜 모듈
     implementation("com.jakewharton.threetenabp:threetenabp:1.4.4")
+
 
 }

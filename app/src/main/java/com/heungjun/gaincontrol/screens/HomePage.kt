@@ -14,6 +14,7 @@ import androidx.navigation.NavController
 import com.heungjun.gaincontrol.commonlayout.GradientBackground
 import com.heungjun.gaincontrol.viewmodel.AuthState
 import com.heungjun.gaincontrol.viewmodel.AuthViewModel
+import com.heungjun.gaincontrol.pages.GraphListScreen
 
 @Composable
 fun HomePage(
@@ -31,20 +32,22 @@ fun HomePage(
         }
     }
 
-    GradientBackground {
-        Column(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = "Home Page", fontSize = 32.sp)
+    GraphListScreen(onAddClicked = {})
+
+//    GradientBackground {
+//        Column(
+//            modifier = modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.Center,
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+//            Text(text = "Home Page", fontSize = 32.sp)
 
 //        TextButton(onClick = {
 //            authViewModel.signout()
 //        }) {
 //            Text(text = "Sign out")
 //        }
-        }
-    }
+//        }
+//    }
 
 }
