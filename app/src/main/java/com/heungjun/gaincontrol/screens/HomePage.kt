@@ -1,5 +1,7 @@
 package com.heungjun.gaincontrol.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +18,7 @@ import com.heungjun.gaincontrol.viewmodel.AuthState
 import com.heungjun.gaincontrol.viewmodel.AuthViewModel
 import com.heungjun.gaincontrol.pages.GraphListScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomePage(
     modifier: Modifier = Modifier,

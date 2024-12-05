@@ -1,5 +1,7 @@
 package com.heungjun.gaincontrol.pages
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -19,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -33,6 +36,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.compose.runtime.remember as remember1
+import com.heungjun.gaincontrol.viewmodel.HealthGoalsViewModel
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 
 data class LifeCycle(
@@ -40,15 +47,22 @@ data class LifeCycle(
     val duration: Int = 0,
     val calorie: Int = 0
 )
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GraphListScreen(onAddClicked: () -> Unit) {
+    val viewModel = HealthGoalsViewModel()
+    val viewModel2 = HealthGoalsViewModel()
 
-    //나중에 저장된 데이터에서 가져와야함 (원형 그래프 데이터)
-    val targetDate = 1500 //목표 일수
-    val progress = 300 //현재 일수
-    val progress2 = 500 //현재 일수 2
+// 특정 UID로 데이터 가져오기
+    viewModel.fetchHealthGoalsData("MfNiz9oIWuZKSRb3Gto1p5GXcjd2")
+    viewModel2.fetchHealthGoalsData("XyK44WoetHN3c5oV7wanK7zGGuw2")
 
-    //나중에 저장된 데이터에서 가져와야함 (막대 그래프 데이터)
+    val smokingData = viewModel.smokingData.observeAsState()
+    val drinkingData = viewModel2.drinkingData.observeAsState()
+    val gamingData = viewModel.gamingData.observeAsState()
+
+
+//    //나중에 저장된 데이터에서 가져와야함 (막대 그래프 데이터)
     val safeMoney_1 = 82
     val safeMoney_2 = 63
 
@@ -114,13 +128,16 @@ fun GraphListScreen(onAddClicked: () -> Unit) {
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        AnimatedCircularProgressBar(
-                            progress,
-                            targetDate,
-                            modifier = Modifier.size(150.dp),
-                            strokeWidth = 10.dp
-                        )
+                    smokingData.value?.let { data ->
+
+                        Box(contentAlignment = Alignment.Center) {
+                            AnimatedCircularProgressBar(
+                                progress = data.totalCigarettes,
+                                targetDate = data.goalYears * 365,
+                                modifier = Modifier.size(150.dp),
+                                strokeWidth = 10.dp
+                            )
+                        }
                     }
                     //추가 정보 삽입
                 }
@@ -128,15 +145,21 @@ fun GraphListScreen(onAddClicked: () -> Unit) {
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        AnimatedCircularProgressBar(
-                            progress2,
-                            targetDate,
-                            modifier = Modifier.size(150.dp),
-                            strokeWidth = 10.dp
-                        )
+                    drinkingData.value?.let { data ->
+                        val startDate = LocalDate.parse(data.startDate, DateTimeFormatter.ISO_LOCAL_DATE)
+                        val today = LocalDate.now()
+                        val daysElapsed = ChronoUnit.DAYS.between(startDate, today).toInt()
+
+                        Box(contentAlignment = Alignment.Center) {
+                            AnimatedCircularProgressBar(
+                                progress = daysElapsed,
+                                targetDate = data.goalYears * 365,
+                                modifier = Modifier.size(150.dp),
+                                strokeWidth = 10.dp
+                            )
+                        }
                     }
-                    //추가 정보 삽입
+
                 }
             }
         }
@@ -264,10 +287,10 @@ fun AnimatedRowGraph(label: String, value: Int, maxValue: Int, barColor: Color) 
     }
 }
 
-@Composable
-@Preview(showBackground = true, widthDp = 360, heightDp = 640)
-fun DietRecodeListScreenFullPreview() {
-    GraphListScreen(
-        onAddClicked = {}
-    )
-}
+//@Composable
+//@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+//fun DietRecodeListScreenFullPreview() {
+//    GraphListScreen(
+//        onAddClicked = {}
+//    )
+//}
