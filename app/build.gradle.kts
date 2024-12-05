@@ -101,5 +101,8 @@ dependencies {
     //날짜 모듈
     implementation("com.jakewharton.threetenabp:threetenabp:1.4.4")
 
+    //선형그래프 모듈
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
 
 }
