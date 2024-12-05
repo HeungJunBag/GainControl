@@ -1,9 +1,11 @@
 package com.heungjun.gaincontrol.pages
 
 import android.graphics.Color
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -13,7 +15,119 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.heungjun.gaincontrol.viewmodel.HealthGoalsViewModel
+
+@Composable
+fun LineGraphWithModal(
+    data: List<Float>, // 그래프 데이터
+    label: String = "", // 그래프 라벨
+    modifier: Modifier = Modifier
+) {
+    // 선택 상태 관리
+    var showModal by remember { mutableStateOf(false) }
+    var selectedCategory by remember { mutableStateOf("선택 없음") }
+    var selectedType by remember { mutableStateOf("선택 없음") }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        // 그래프
+        LineGraphMPAndroidChart(
+            data = data,
+            label = label,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+                .align(Alignment.TopCenter)
+        )
+
+        // 플로팅 버튼
+        FloatingActionButton(
+            onClick = { showModal = true },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        ) {
+            Text("+")
+        }
+
+        // 모달 창
+        if (showModal) {
+            AlertDialog(
+                onDismissRequest = { showModal = false },
+                title = { Text("항목 선택") },
+                text = {
+                    Column {
+                        Text("카테고리 선택")
+                        DropdownMenuSelection(
+                            items = listOf("게임", "음주", "담배"),
+                            selected = selectedCategory,
+                            onSelect = { selectedCategory = it }
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("타입 선택")
+                        DropdownMenuSelection(
+                            items = listOf("시간", "돈"),
+                            selected = selectedType,
+                            onSelect = { selectedType = it }
+                        )
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = { showModal = false }) {
+                        Text("확인")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showModal = false }) {
+                        Text("취소")
+                    }
+                },
+                shape = RoundedCornerShape(16.dp)
+            )
+        }
+
+        // 선택된 값 표시
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(16.dp)
+        ) {
+            Text("선택된 카테고리: $selectedCategory")
+            Text("선택된 타입: $selectedType")
+        }
+    }
+}
+
+@Composable
+fun DropdownMenuSelection(
+    items: List<String>,
+    selected: String,
+    onSelect: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box {
+        Button(onClick = { expanded = true }) {
+            Text(selected)
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            items.forEach { item ->
+                DropdownMenuItem(
+                    text = { Text(item) },
+                    onClick = {
+                        onSelect(item)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
 
 @Composable
 fun LineGraphMPAndroidChart(
@@ -22,44 +136,34 @@ fun LineGraphMPAndroidChart(
     modifier: Modifier = Modifier
 ) {
     AndroidView(
-        modifier = modifier
-            .fillMaxWidth() // 그래프 가로 길이 채우기
-            .height(300.dp), // 그래프 높이 설정
+        modifier = modifier,
         factory = { context ->
             LineChart(context).apply {
-                // LineChart 기본 설정
-                description.isEnabled = false // 설명 제거
-                xAxis.position = XAxis.XAxisPosition.BOTTOM // X축 아래로 위치
-                axisRight.isEnabled = false // 오른쪽 Y축 비활성화
-                axisLeft.textColor = Color.BLACK // 왼쪽 Y축 텍스트 색상
-                xAxis.textColor = Color.BLACK // X축 텍스트 색상
-                legend.isEnabled = true // 그래프 설명 활성화
+                description.isEnabled = false
+                xAxis.position = XAxis.XAxisPosition.BOTTOM
+                axisRight.isEnabled = false
+                axisLeft.textColor = Color.BLACK
+                xAxis.textColor = Color.BLACK
+                legend.isEnabled = true
             }
         },
         update = { chart ->
-            // 데이터셋 생성
             val entries = data.mapIndexed { index, value ->
                 Entry(index.toFloat(), value)
             }
             val lineDataSet = LineDataSet(entries, label).apply {
-                color = Color.BLUE // 그래프 선 색상
-                valueTextColor = Color.GRAY // 데이터 값 텍스트 색상
-                lineWidth = 2f // 그래프 선 두께
-                circleRadius = 4f // 데이터 포인트 원 크기
-                circleColors = listOf(Color.BLUE) // 데이터 포인트 원 색상
-                setDrawCircleHole(false) // 데이터 포인트 원 내부 비우기
+                color = Color.BLUE
+                valueTextColor = Color.GRAY
+                lineWidth = 2f
+                circleRadius = 4f
+                circleColors = listOf(Color.BLUE)
+                setDrawCircleHole(false)
             }
-
-            // 데이터 추가
             chart.data = LineData(lineDataSet)
-
-            // 축 범위 설정
             chart.xAxis.axisMinimum = 0f
             chart.xAxis.axisMaximum = (data.size - 1).toFloat()
             chart.axisLeft.axisMinimum = 0f
-            chart.axisLeft.axisMaximum = (data.maxOrNull() ?: 0f) + 10f // 최대값 + 여유값
-
-            // 그래프 업데이트
+            chart.axisLeft.axisMaximum = (data.maxOrNull() ?: 0f) + 10f
             chart.invalidate()
         }
     )
@@ -67,9 +171,9 @@ fun LineGraphMPAndroidChart(
 
 @Composable
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
-fun LineGraphPreview() {
-    LineGraphMPAndroidChart(
-        data = listOf(10f, 20f, 30f, 40f, 50f), // 샘플 데이터
+fun LineGraphWithModalPreview() {
+    LineGraphWithModal(
+        data = listOf(10f, 20f, 30f, 40f, 50f),
         label = "데모 그래프"
     )
 }

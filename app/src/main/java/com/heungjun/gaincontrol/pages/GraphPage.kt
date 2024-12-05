@@ -18,6 +18,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.SmokingRooms
+import androidx.compose.material.icons.filled.VideogameAsset
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +33,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -41,12 +46,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-
-data class LifeCycle(
-    val name: String = "",
-    val duration: Int = 0,
-    val calorie: Int = 0
-)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GraphListScreen(onAddClicked: () -> Unit) {
@@ -129,17 +128,28 @@ fun GraphListScreen(onAddClicked: () -> Unit) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     smokingData.value?.let { data ->
-
+                        val startDate = LocalDate.parse(data.startDate, DateTimeFormatter.ISO_LOCAL_DATE)
+                        val today = LocalDate.now()
+                        val daysElapsed = ChronoUnit.DAYS.between(startDate, today).toInt()
+                        val goalDate = data.goalYears * 365
                         Box(contentAlignment = Alignment.Center) {
                             AnimatedCircularProgressBar(
-                                progress = data.totalCigarettes,
-                                targetDate = data.goalYears * 365,
+                                progress = daysElapsed,
+                                targetDate = goalDate,
                                 modifier = Modifier.size(150.dp),
                                 strokeWidth = 10.dp
                             )
                         }
+
+                        Spacer(modifier = Modifier.padding(5.dp))
+
+                        StatusCard(
+                            icon = Icons.Filled.SmokingRooms, // Material Design 아이콘
+                            statusTitle = "흡연",
+                            quitYears = "$daysElapsed 일",
+                            goalYears = "$goalDate 일"
+                        )
                     }
-                    //추가 정보 삽입
                 }
                 Column(
                     modifier = Modifier.weight(1f),
@@ -149,6 +159,7 @@ fun GraphListScreen(onAddClicked: () -> Unit) {
                         val startDate = LocalDate.parse(data.startDate, DateTimeFormatter.ISO_LOCAL_DATE)
                         val today = LocalDate.now()
                         val daysElapsed = ChronoUnit.DAYS.between(startDate, today).toInt()
+                        val goalDate = data.goalYears * 365
 
                         Box(contentAlignment = Alignment.Center) {
                             AnimatedCircularProgressBar(
@@ -158,6 +169,15 @@ fun GraphListScreen(onAddClicked: () -> Unit) {
                                 strokeWidth = 10.dp
                             )
                         }
+
+                        Spacer(modifier = Modifier.padding(5.dp))
+
+                        StatusCard(
+                            icon = Icons.Filled.VideogameAsset, // Material Design 아이콘
+                            statusTitle = "게임",
+                            quitYears = "$daysElapsed 일",
+                            goalYears = "$goalDate 일"
+                        )
                     }
 
                 }
@@ -287,10 +307,83 @@ fun AnimatedRowGraph(label: String, value: Int, maxValue: Int, barColor: Color) 
     }
 }
 
-//@Composable
-//@Preview(showBackground = true, widthDp = 360, heightDp = 640)
-//fun DietRecodeListScreenFullPreview() {
-//    GraphListScreen(
-//        onAddClicked = {}
-//    )
-//}
+@Composable
+fun StatusCard (
+    icon: ImageVector,
+    statusTitle: String,
+    quitYears: String,
+    goalYears: String,
+    backgroundColor: Color = Color.LightGray,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .background(backgroundColor)
+            .padding(16.dp)
+            .size(120.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            // 아이콘
+            Icon(
+                imageVector = icon,
+                contentDescription = statusTitle,
+                tint = Color.Black,
+                modifier = Modifier.size(40.dp)
+            )
+
+            // 제목
+            Text(
+                text = statusTitle,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
+
+            // 금욕 기간 및 목표 기간 정보
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "금욕시간",
+                        color = Color.Blue,
+                        fontSize = 12.sp
+                    )
+                    Text(
+                        text = quitYears,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "목표시간",
+                        color = Color.Blue,
+                        fontSize = 12.sp
+                    )
+                    Text(
+                        text = goalYears,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                }
+            }
+        }
+    }
+}
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+fun DietRecodeListScreenFullPreview() {
+    GraphListScreen(
+        onAddClicked = {}
+    )
+}
