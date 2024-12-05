@@ -61,7 +61,7 @@ fun GraphListScreen(onAddClicked: () -> Unit) {
     val gamingData = viewModel.gamingData.observeAsState()
 
 
-//    //나중에 저장된 데이터에서 가져와야함 (막대 그래프 데이터)
+//  나중에 저장된 데이터에서 가져와야함 (막대 그래프 데이터)
     val safeMoney_1 = 82
     val safeMoney_2 = 63
 
@@ -295,15 +295,13 @@ fun AnimatedRowGraph(label: String, value: Int, maxValue: Int, barColor: Color) 
                     .fillMaxWidth(animatedValue.value)
                     .background(barColor)
             )
+            Text(
+                text = "$value",
+                color = Color.Black,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(start = 15.dp)
+            )
         }
-
-        // 값 표시
-        Text(
-            text = "$value",
-            color = Color.White,
-            fontSize = 14.sp,
-            modifier = Modifier.padding(start = 8.dp)
-        )
     }
 }
 
