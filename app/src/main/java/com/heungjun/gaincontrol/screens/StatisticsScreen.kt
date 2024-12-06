@@ -35,6 +35,7 @@ import com.heungjun.gaincontrol.pages.getDateKey
 import com.heungjun.gaincontrol.pages.sortPlanDetails
 import com.heungjun.gaincontrol.viewmodel.AuthState
 import com.heungjun.gaincontrol.viewmodel.AuthViewModel
+import com.heungjun.gaincontrol.viewmodel.SharedViewModel
 import java.util.Calendar
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -44,6 +45,7 @@ fun StatisticsScreen(
     authViewModel: AuthViewModel = viewModel()
 ) {
     val authState = authViewModel.authState.observeAsState()
+    val sharedViewModel = remember { SharedViewModel() }
 
     // 로그인 상태 확인 후 리디렉션
     LaunchedEffect(authState.value) {
@@ -117,7 +119,7 @@ fun StatisticsScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // 그래프 영역 추가
-            GraphListScreen(onAddClicked = {})
+            GraphListScreen(sharedViewModel = sharedViewModel, onAddClicked = {})
         }
 
         // 입력 다이얼로그

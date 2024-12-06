@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,19 +29,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.heungjun.gaincontrol.models.UserHabits
 import androidx.compose.runtime.remember as remember1
 import com.heungjun.gaincontrol.viewmodel.HealthGoalsViewModel
+import com.heungjun.gaincontrol.viewmodel.SharedViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun GraphListScreen(onAddClicked: () -> Unit) {
+fun GraphListScreen(sharedViewModel: SharedViewModel, onAddClicked: () -> Unit) {
+    val totalDambe by sharedViewModel.totalDambe.observeAsState(0)
+    val totalSoju by sharedViewModel.totalSoju.observeAsState(0)
+    val totalGame by sharedViewModel.totalGame.observeAsState(0)
+
     val viewModel = HealthGoalsViewModel()
 
+    val auth = FirebaseAuth.getInstance()
+    val currentUser = auth.currentUser
+    val uid = currentUser?.uid
+
     // 특정 UID로 데이터 가져오기
-    viewModel.fetchHealthGoalsData("B6KOV5gZRrgaA1v4089KrLmqHWk2")
+    viewModel.fetchHealthGoalsData(uid.toString())
 
     val smokingData = viewModel.smokingData.observeAsState()
     val drinkingData = viewModel.drinkingData.observeAsState()
@@ -56,6 +69,19 @@ fun GraphListScreen(onAddClicked: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("누적 데이터 요약", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                AnimatedRowGraph(label = "담배", value = totalDambe, maxValue = 100, barColor = Color.Green)
+                AnimatedRowGraph(label = "술", value = totalSoju, maxValue = 100, barColor = Color.Blue)
+                AnimatedRowGraph(label = "게임", value = totalGame, maxValue = 100, barColor = Color.Yellow)
+            }
+
             Spacer(modifier = Modifier.height(20.dp))
 
             // 원형 그래프와 상태 카드 3개를 가로로 배치
@@ -310,11 +336,63 @@ fun StatusCard(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-@Preview(showBackground = true, widthDp = 360, heightDp = 640)
-fun DietRecodeListScreenFullPreview() {
-    GraphListScreen(
-        onAddClicked = {}
-    )
+fun AnimatedRowGraph(label: String, value: Int, maxValue: Int, barColor: Color) {
+
+    val animatedValue = remember1 { Animatable(0f) }
+
+    LaunchedEffect(Unit) {
+        animatedValue.animateTo(
+            targetValue = value.toFloat() / maxValue,
+            animationSpec = tween(durationMillis = 1000)
+        )
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // 레이블
+        Text(
+            text = label,
+            color = Color.Black,
+            fontSize = 13.sp,
+            modifier = Modifier.width(50.dp)
+        )
+
+        // 백그라운드 막대
+        Box(
+            modifier = Modifier
+                .height(24.dp)
+                .fillMaxWidth()
+                .background(Color.LightGray)
+        ) {
+            //막대
+            Box(
+                modifier = Modifier
+                    .height(24.dp)
+                    .fillMaxWidth(animatedValue.value)
+                    .background(barColor)
+            )
+        }
+
+        // 값 표시
+        Text(
+            text = "$value",
+            color = Color.White,
+            fontSize = 14.sp,
+            modifier = Modifier.padding(start = 8.dp)
+        )
+    }
 }
+
+//@RequiresApi(Build.VERSION_CODES.O)
+//@Composable
+//@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+//fun DietRecodeListScreenFullPreview() {
+//    GraphListScreen(
+//        onAddClicked = {}
+//    )
+//}
