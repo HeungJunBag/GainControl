@@ -32,6 +32,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,18 +44,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.heungjun.gaincontrol.viewmodel.SharedViewModel
 import java.util.Calendar
 
 @Composable
-fun DetailedCalendarApp() {
+fun DetailedCalendarApp(sharedViewModel: SharedViewModel) {
     var selectedDate by remember { mutableStateOf(Calendar.getInstance()) }
     var showInputDialog by remember { mutableStateOf(false) }
     val plans = remember { mutableStateMapOf<String, MutableList<Plan>>() }
     val accumulatedData = remember { mutableStateMapOf<String, MutableMap<String, Int>>() }
 
-    var TotalDambe by remember { mutableStateOf(0) }
-    var TotalSoju by remember { mutableStateOf(0) }
-    var TotalGame by remember { mutableStateOf(0) }
+    val TotalDambe by sharedViewModel.totalDambe.observeAsState(0)
+    val TotalSoju by sharedViewModel.totalSoju.observeAsState(0)
+    val TotalGame by sharedViewModel.totalGame.observeAsState(0)
 
     val scrollState = rememberScrollState()
 
@@ -138,7 +140,7 @@ fun DetailedCalendarApp() {
                             ?.get(1)
                             ?.trim()
                             ?.toIntOrNull() ?: 0
-                        TotalDambe += todayDambe
+                        sharedViewModel.updateTotalDambe(todayDambe)
                     }
                     "술" -> {
                         val todaySoju = details.lines().find { it.startsWith("estimatedAmount:") }
@@ -146,7 +148,7 @@ fun DetailedCalendarApp() {
                             ?.get(1)
                             ?.trim()
                             ?.toIntOrNull() ?: 0
-                        TotalSoju += todaySoju
+                        sharedViewModel.updateTotalSoju(todaySoju)
                     }
                     "게임" -> {
                         val startTime = details.lines().find { it.startsWith("startTime:") }
@@ -160,7 +162,7 @@ fun DetailedCalendarApp() {
                             ?.trim()
                             ?.toIntOrNull() ?: 0
                         val todayGame = if (endTime > startTime) endTime - startTime else 0
-                        TotalGame += todayGame
+                        sharedViewModel.updateTotalGame(todayGame)
                     }
                 }
 
@@ -381,7 +383,7 @@ fun DetailedPlanInputDialog(onDismiss: () -> Unit, onSave: (String, String) -> U
                 when (selectedCategory) {
                     "담배" -> {
                         TextFieldWithLabel(
-                            label = "하루에 평균 몇갑 피우시나요?",
+                            label = "하루에 몇 개비 피우셨나요?",
                             value = inputValues["avgPacks"] ?: "",
                             onValueChange = { inputValues["avgPacks"] = it }
                         )
@@ -524,7 +526,7 @@ fun translateKeyToKorean(detail: String): String {
         detail.startsWith("startTime:") -> detail.replace("startTime:", "시작 시간:")
         detail.startsWith("endTime:") -> detail.replace("endTime:", "종료 시간:")
         detail.startsWith("weeklyPlay:") -> detail.replace("weeklyPlay:", "주간 플레이 시간:")
-        detail.startsWith("avgPacks:") -> detail.replace("avgPacks:", "평균 담배 갑 수:")
+        detail.startsWith("avgPacks:") -> detail.replace("avgPacks:", "핀 담배 개비 수:")
         detail.startsWith("dailyTime:") -> detail.replace("dailyTime:", "하루 소비 시간:")
         detail.startsWith("weeklyCost:") -> detail.replace("weeklyCost:", "주간 비용:")
         detail.startsWith("estimatedAmount:") -> detail.replace("estimatedAmount:", "예상 주량:")
@@ -540,66 +542,66 @@ fun getDateKey(date: Calendar): String {
     return "${date.get(Calendar.YEAR)}-${date.get(Calendar.MONTH) + 1}-${date.get(Calendar.DAY_OF_MONTH)}"
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewDetailedCalendarApp() {
-    DetailedCalendarApp()
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewCalendarScreen() {
-    val selectedDate = Calendar.getInstance()
-    val plans = mapOf(
-        getDateKey(selectedDate) to listOf(
-            Plan("게임", "startTime:14\nendTime:16\nweeklyPlay:5"),
-            Plan("술", "startTime:18\nendTime:22\nestimatedAmount:2")
-        )
-    )
-    CalendarScreen(
-        selectedDate = selectedDate,
-        onDateChange = {},
-        plans = plans
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewDetailedPlanInputDialog() {
-    DetailedPlanInputDialog(
-        onDismiss = {},
-        onSave = { _, _ -> }
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewTextFieldWithLabel() {
-    TextFieldWithLabel(
-        label = "라벨 텍스트",
-        value = "기본 값",
-        onValueChange = {}
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewPlanDetails() {
-    Text(
-        text = sortPlanDetails(
-            """
-            startTime:14
-            endTime:16
-            weeklyPlay:5
-            avgPacks:2
-            dailyTime:4
-            weeklyCost:50
-            estimatedAmount:3
-            """.trimIndent()
-        )
-    )
-}
-
-
-
-
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewDetailedCalendarApp() {
+//    DetailedCalendarApp()
+//}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewCalendarScreen() {
+//    val selectedDate = Calendar.getInstance()
+//    val plans = mapOf(
+//        getDateKey(selectedDate) to listOf(
+//            Plan("게임", "startTime:14\nendTime:16\nweeklyPlay:5"),
+//            Plan("술", "startTime:18\nendTime:22\nestimatedAmount:2")
+//        )
+//    )
+//    CalendarScreen(
+//        selectedDate = selectedDate,
+//        onDateChange = {},
+//        plans = plans
+//    )
+//}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewDetailedPlanInputDialog() {
+//    DetailedPlanInputDialog(
+//        onDismiss = {},
+//        onSave = { _, _ -> }
+//    )
+//}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewTextFieldWithLabel() {
+//    TextFieldWithLabel(
+//        label = "라벨 텍스트",
+//        value = "기본 값",
+//        onValueChange = {}
+//    )
+//}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewPlanDetails() {
+//    Text(
+//        text = sortPlanDetails(
+//            """
+//            startTime:14
+//            endTime:16
+//            weeklyPlay:5
+//            avgPacks:2
+//            dailyTime:4
+//            weeklyCost:50
+//            estimatedAmount:3
+//            """.trimIndent()
+//        )
+//    )
+//}
+//
+//
+//
+//

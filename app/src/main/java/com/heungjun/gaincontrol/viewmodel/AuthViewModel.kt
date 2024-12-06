@@ -1,10 +1,16 @@
 package com.heungjun.gaincontrol.viewmodel
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.Date
 
 class AuthViewModel : ViewModel() {
 
@@ -72,6 +78,15 @@ class AuthViewModel : ViewModel() {
             onComplete(false)
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getAccountCreationDate(): LocalDate? {
+        val user: FirebaseUser? = auth.currentUser
+        val creationTimestamp = user?.metadata?.creationTimestamp ?: return null
+        val date = Date(creationTimestamp)
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+    }
+
 }
 
 sealed class AuthState {
