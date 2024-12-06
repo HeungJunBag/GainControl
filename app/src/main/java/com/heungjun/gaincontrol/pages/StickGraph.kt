@@ -1,12 +1,7 @@
+package com.heungjun.gaincontrol.pages
+
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SmokingRooms
 import androidx.compose.material3.Icon
@@ -22,83 +17,127 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun StatusCard (
+fun StatusBar(
+    name: String,
+    toDay: Int,
+    goalDate: Int,
+    modifier: Modifier = Modifier
+) {
+    val progress = ((toDay.toFloat() / goalDate) * 100).toInt() // 진행률 계산
+
+    Box(
+        modifier = modifier
+            .background(Color.LightGray)
+            .padding(16.dp)
+            .fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Status(
+                icon = Icons.Filled.SmokingRooms,
+                statusTitle = name,
+                quitYears = "$toDay 일",
+                goalYears = "$goalDate 일",
+                progress = progress
+            )
+        }
+    }
+}
+
+@Composable
+fun Status(
     icon: ImageVector,
     statusTitle: String,
     quitYears: String,
     goalYears: String,
-    backgroundColor: Color = Color.LightGray,
+    progress: Int,
     modifier: Modifier = Modifier
 ) {
-
-    Box(
+    Column(
         modifier = modifier
-            .background(backgroundColor)
+            .background(Color.LightGray)
             .padding(16.dp)
-            .size(120.dp)
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // 아이콘
             Icon(
                 imageVector = icon,
                 contentDescription = statusTitle,
                 tint = Color.Black,
                 modifier = Modifier.size(40.dp)
             )
-
-            // 제목
             Text(
                 text = statusTitle,
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp
             )
+        }
 
-            // 금욕 기간 및 목표 기간 정보
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = "금욕시간",
-                    color = Color.Blue,
-                    fontSize = 8.sp
-                )
-                Text(
-                    text = quitYears,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
-                )
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "현재 목표 $goalYears 년",
-                        color = Color.Black,
-                        fontSize = 8.sp
-                    )
-                    Text(
-                        text = "$goalYears %",
-                        color = Color.Black,
-                        fontSize = 8.sp
-                    )
-                }
-            }
+        Text(
+            text = "금욕시간",
+            color = Color.Blue,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(0.dp)
+        ) {
+            Text(
+                text = quitYears,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
+
+            Text(
+                text = "현재 목표 $goalYears",
+                color = Color.Black,
+                fontSize = 12.sp
+            )
+        }
+
+        // Progress Bar
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .background(Color.Gray.copy(alpha = 0.5f))
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(progress / 100f)
+                    .height(8.dp)
+                    .background(Color.Black)
+            )
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "$progress%",
+                color = Color.Black,
+                fontSize = 12.sp
+            )
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewStickGraph() {
-    StatusCard(
-        icon = Icons.Filled.SmokingRooms, // Material Design 아이콘
-        statusTitle = "흡연",
-        quitYears = "10",
-        goalYears = "100"
+fun PreviewStatusBar() {
+    StatusBar(
+        name = "흡연",
+        toDay = 300,
+        goalDate = 2190
     )
 }
