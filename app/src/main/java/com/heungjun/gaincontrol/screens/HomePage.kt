@@ -38,12 +38,10 @@ fun HomePage(
         }
     }
 
-//    StatusCard(
-//        icon = Icons.Filled.SmokingRooms, // Material Design 아이콘
-//        statusTitle = "흡연",
-//        quitYears = "10일",
-//        goalYears = "100일"
-//    )
+    GraphListScreen(
+        onAddClicked = {}
+    )
+
 
 //    GradientBackground {
 //        Column(
