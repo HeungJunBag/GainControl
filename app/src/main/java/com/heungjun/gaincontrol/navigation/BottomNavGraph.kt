@@ -1,6 +1,8 @@
 package com.heungjun.gaincontrol.navigation
 
 import StatisticsScreen
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -12,6 +14,7 @@ import com.heungjun.gaincontrol.screens.SettingsScreen
 //import com.heungjun.gaincontrol.screens.StatisticsScreen
 import com.heungjun.gaincontrol.pages.LoginPage // Import LoginPage
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BottomNavGraph(
     navController: NavHostController,

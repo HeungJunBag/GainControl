@@ -2,7 +2,17 @@ package com.heungjun.gaincontrol.pages
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
@@ -11,17 +21,29 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import java.util.*
+import java.util.Calendar
 
 @Composable
 fun DetailedCalendarApp() {
@@ -204,23 +226,40 @@ fun CalendarScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = {
-                calendar.add(Calendar.MONTH, -1)
-                onDateChange(calendar)
-            }) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "이전 달")
+            IconButton(
+                onClick = {
+                    calendar.add(Calendar.MONTH, -1)
+                    onDateChange(calendar)
+                },
+                modifier = Modifier.size(36.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "이전 달",
+                    tint = Color(0xFF4CAF50)
+                )
             }
 
             Text(
                 text = "${calendar.get(Calendar.YEAR)}년 ${calendar.get(Calendar.MONTH) + 1}월",
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF00796B)
+                )
             )
 
-            IconButton(onClick = {
-                calendar.add(Calendar.MONTH, 1)
-                onDateChange(calendar)
-            }) {
-                Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "다음 달")
+            IconButton(
+                onClick = {
+                    calendar.add(Calendar.MONTH, 1)
+                    onDateChange(calendar)
+                },
+                modifier = Modifier.size(36.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = "다음 달",
+                    tint = Color(0xFF4CAF50)
+                )
             }
         }
 
@@ -230,10 +269,12 @@ fun CalendarScreen(
                 .fillMaxWidth()
                 .aspectRatio(1f)
         ) {
+            // 빈 칸 생성 (월 시작 요일에 맞게)
             items((firstDayOfWeek - 1).coerceAtLeast(0)) {
                 Spacer(modifier = Modifier.size(40.dp))
             }
 
+            // 날짜 표시
             items(maxDay) { day ->
                 val currentDate = Calendar.getInstance().apply {
                     set(Calendar.YEAR, year)
@@ -250,11 +291,11 @@ fun CalendarScreen(
                 Box(
                     modifier = Modifier
                         .size(40.dp)
-                        .clip(RoundedCornerShape(20.dp))
+                        .clip(RoundedCornerShape(12.dp))
                         .background(
                             when {
-                                isSelected -> Color(0xFF357EDD)
-                                hasPlans -> Color(0xFF00BCD4) // 일정이 있는 날을 하이라이트 (연한 파랑)
+                                isSelected -> Color(0xFF4CAF50) // 선택된 날짜 강조
+                                hasPlans -> Color(0xFFA5D6A7) // 일정이 있는 날짜 강조
                                 else -> Color.Transparent
                             }
                         )
@@ -270,7 +311,10 @@ fun CalendarScreen(
                 ) {
                     Text(
                         text = "${day + 1}",
-                        color = if (isSelected) Color.White else Color.Black
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.Medium,
+                            color = if (isSelected) Color.White else Color.Black
+                        )
                     )
                 }
             }
@@ -285,19 +329,48 @@ fun DetailedPlanInputDialog(onDismiss: () -> Unit, onSave: (String, String) -> U
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
-        title = { Text("세부 일정") },
+        title = {
+            Text(
+                "\uD83D\uDDD3\uFE0F",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF4CAF50)
+                )
+            )
+        },
         text = {
-            Column {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .background(Color(0xFFF1F8E9)) // 연한 녹색 배경
+                    .clip(RoundedCornerShape(12.dp))
+                    .padding(16.dp)
+            ) {
                 // 카테고리 선택
-                Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
                     listOf("담배", "술", "게임").forEach { category ->
                         TextButton(
                             onClick = { selectedCategory = category },
                             colors = ButtonDefaults.textButtonColors(
-                                contentColor = if (selectedCategory == category) Color.Blue else Color.Gray
-                            )
+                                contentColor = if (selectedCategory == category) Color(0xFF4CAF50) else Color.Gray
+                            ),
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(
+                                    if (selectedCategory == category) Color(0xFFA5D6A7) else Color.Transparent
+                                )
                         ) {
-                            Text(category)
+                            Text(
+                                text = category,
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
                         }
                     }
                 }
@@ -366,30 +439,69 @@ fun DetailedPlanInputDialog(onDismiss: () -> Unit, onSave: (String, String) -> U
             }
         },
         confirmButton = {
-            TextButton(onClick = {
-                val details = inputValues.entries.joinToString("\n") { "${it.key}: ${it.value}" }
-                onSave(selectedCategory, details)
-            }) {
-                Text("저장")
+            TextButton(
+                onClick = {
+                    val details = inputValues.entries.joinToString("\n") { "${it.key}: ${it.value}" }
+                    onSave(selectedCategory, details)
+                },
+                colors = ButtonDefaults.textButtonColors(containerColor = Color(0xFF4CAF50))
+            ) {
+                Text(
+                    text = "저장",
+                    style = MaterialTheme.typography.bodyLarge.copy(color = Color.White)
+                )
             }
         },
         dismissButton = {
-            TextButton(onClick = { onDismiss() }) {
-                Text("취소")
+            TextButton(
+                onClick = { onDismiss() },
+                colors = ButtonDefaults.textButtonColors(containerColor = Color(0xFFB0BEC5))
+            ) {
+                Text(
+                    text = "취소",
+                    style = MaterialTheme.typography.bodyLarge.copy(color = Color.White)
+                )
             }
         }
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldWithLabel(label: String, value: String, onValueChange: (String) -> Unit) {
-    Column(modifier = Modifier.padding(vertical = 4.dp)) {
-        Text(text = label, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+    Column(
+        modifier = Modifier
+            .padding(vertical = 8.dp)
+            .fillMaxWidth()
+    ) {
+        // 라벨
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall.copy(
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF4CAF50)
+            ),
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
+
+        // 텍스트 필드
         TextField(
             value = value,
             onValueChange = onValueChange,
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp)) // 둥근 모서리
+                .background(Color(0xFFFAFAFA)), // 배경색
+            singleLine = true,
+            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                color = Color.Black
+            ),
+            colors = androidx.compose.material3.TextFieldDefaults.textFieldColors(
+                containerColor = Color.White, // 텍스트 필드 배경색
+                focusedIndicatorColor = Color(0xFF4CAF50), // 포커스 상태의 경계선 색상
+                unfocusedIndicatorColor = Color.Gray, // 비포커스 상태의 경계선 색상
+                cursorColor = Color(0xFF4CAF50) // 커서 색상
+            )
         )
     }
 }
@@ -433,5 +545,61 @@ fun getDateKey(date: Calendar): String {
 fun PreviewDetailedCalendarApp() {
     DetailedCalendarApp()
 }
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewCalendarScreen() {
+    val selectedDate = Calendar.getInstance()
+    val plans = mapOf(
+        getDateKey(selectedDate) to listOf(
+            Plan("게임", "startTime:14\nendTime:16\nweeklyPlay:5"),
+            Plan("술", "startTime:18\nendTime:22\nestimatedAmount:2")
+        )
+    )
+    CalendarScreen(
+        selectedDate = selectedDate,
+        onDateChange = {},
+        plans = plans
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewDetailedPlanInputDialog() {
+    DetailedPlanInputDialog(
+        onDismiss = {},
+        onSave = { _, _ -> }
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewTextFieldWithLabel() {
+    TextFieldWithLabel(
+        label = "라벨 텍스트",
+        value = "기본 값",
+        onValueChange = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewPlanDetails() {
+    Text(
+        text = sortPlanDetails(
+            """
+            startTime:14
+            endTime:16
+            weeklyPlay:5
+            avgPacks:2
+            dailyTime:4
+            weeklyCost:50
+            estimatedAmount:3
+            """.trimIndent()
+        )
+    )
+}
+
+
 
 

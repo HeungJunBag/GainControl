@@ -1,5 +1,6 @@
 package com.heungjun.gaincontrol.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -8,10 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.heungjun.gaincontrol.components.LineChartComponent
 import com.heungjun.gaincontrol.viewmodel.AuthViewModel
 import com.heungjun.gaincontrol.viewmodel.UserViewModel
@@ -30,11 +33,24 @@ fun HomePage(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(scrollState) // 스크롤 가능하도록 설정
+            .verticalScroll(scrollState)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // URL에서 이미지 로드
+        val imageUrl = "https://img.freepik.com/free-vector/people-celebrating-goal-achievement-flat-hand-drawn_23-2148825627.jpg?t=st=1733474173~exp=1733477773~hmac=8e33d752cefa533ab170bb34a52a7b62d51c4029c47052691a99fc83e226ad12&w=1380"
+        val painter = rememberAsyncImagePainter(model = imageUrl)
+
+        Image(
+            painter = painter,
+            contentDescription = "상단 이미지",
+            contentScale = ContentScale.Crop, // 이미지를 화면에 꽉 채우도록 설정
+            modifier = Modifier
+                .fillMaxWidth() // 가로로 화면 전체를 채움
+                .height(200.dp) // 이미지 높이 설정
+        )
+
         // 흡연 관련 그래프 (데이터가 있을 때만 제목과 그래프 표시)
         if (graphData.value?.containsKey("smoking_savings") == true || graphData.value?.containsKey("smoking_time_saved") == true) {
             Text("금연 통계", fontSize = 20.sp)
