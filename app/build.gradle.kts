@@ -103,5 +103,6 @@ dependencies {
 
     // 알림
     implementation("com.google.firebase:firebase-messaging-ktx:24.1.0")
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
 }
