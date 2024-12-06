@@ -90,8 +90,8 @@ fun StatisticsScreen(
     var SaveMoney_G = ((((GperWeek * Gperhour) * (daysElapsed)) - TotalGame) * 1500).coerceAtLeast(0)
 
     var SaveTime_D = ((SperDay * daysElapsed - TotalDambe) * 7).coerceAtLeast(0)
-    var SaveTime_S = ((((DperWeek * DperSession) * (daysElapsed/7)) - TotalSoju) * 4).coerceAtLeast(0)
-    var SaveTime_G = (((GperWeek * Gperhour) * (daysElapsed)) - TotalGame).coerceAtLeast(0)
+    var SaveTime_S = ((((DperWeek * DperSession) * (daysElapsed/7)) - TotalSoju) * 240).coerceAtLeast(0)
+    var SaveTime_G = ((((GperWeek * Gperhour) * (daysElapsed)) - TotalGame) * 60).coerceAtLeast(0)
 
     // 로그인 상태 확인 후 리디렉션
     LaunchedEffect(authState.value) {
@@ -173,19 +173,18 @@ fun StatisticsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("아낀 돈", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text("아낀 돈(원)", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Spacer(modifier = Modifier.height(8.dp))
                     AnimatedRowGraph(label = "담배", value = SaveMoney_D, maxValue = 2000000, barColor = Color.Green)
-                    AnimatedRowGraph(label = "술", value = SaveMoney_S, maxValue = 2000000, barColor = Color.Blue)
-                    AnimatedRowGraph(label = "게임", value = SaveMoney_G, maxValue = 2000000, barColor = Color.Yellow)
+                    AnimatedRowGraph(label = "술", value = SaveMoney_S, maxValue = 2000000, barColor = Color.Green)
+                    AnimatedRowGraph(label = "게임", value = SaveMoney_G, maxValue = 2000000, barColor = Color.Green)
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Text("아낀 시간", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-
+                    Text("아낀 시간(분)", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Spacer(modifier = Modifier.height(8.dp))
-                    AnimatedRowGraph(label = "담배", value = SaveTime_D, maxValue = 200000, barColor = Color.Green)
-                    AnimatedRowGraph(label = "술", value = SaveTime_S, maxValue = 200000 , barColor = Color.Blue)
+                    AnimatedRowGraph(label = "담배", value = SaveTime_D, maxValue = 200000, barColor = Color.Yellow)
+                    AnimatedRowGraph(label = "술", value = SaveTime_S, maxValue = 200000 , barColor = Color.Yellow)
                     AnimatedRowGraph(label = "게임", value = SaveTime_G, maxValue = 200000, barColor = Color.Yellow)
                 }}
 

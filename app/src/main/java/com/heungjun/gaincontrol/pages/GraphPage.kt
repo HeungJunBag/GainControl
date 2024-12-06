@@ -70,21 +70,6 @@ fun GraphListScreen(sharedViewModel: SharedViewModel, authViewModel: AuthViewMod
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(20.dp))
-
-//            Column(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                Text("누적 데이터 요약", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-//                Spacer(modifier = Modifier.height(8.dp))
-//                AnimatedRowGraph(label = "담배", value = totalDambe.toInt(), maxValue = 100, barColor = Color.Green)
-//                AnimatedRowGraph(label = "술", value = totalSoju.toInt(), maxValue = 100, barColor = Color.Blue)
-//                AnimatedRowGraph(label = "게임", value = totalGame.toInt(), maxValue = 100, barColor = Color.Yellow)
-//            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
             // 원형 그래프와 상태 카드 3개를 가로로 배치
             Row(
                 modifier = Modifier
@@ -277,7 +262,7 @@ fun StatusCard(
         modifier = modifier
             .background(backgroundColor)
             .padding(16.dp)
-            .size(120.dp)
+            .sizeIn(minHeight = 120.dp)
     ) {
         Column(
             modifier = Modifier
@@ -302,39 +287,33 @@ fun StatusCard(
             )
 
             // 금욕 기간 및 목표 기간 정보
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "금욕시간",
-                        color = Color.Blue,
-                        fontSize = 12.sp
-                    )
-                    Text(
-                        text = quitYears,
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
-                    )
-                }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "목표시간",
-                        color = Color.Blue,
-                        fontSize = 12.sp
-                    )
-                    Text(
-                        text = goalYears,
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
-                    )
-                }
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "금욕시간",
+                    color = Color.Blue,
+                    fontSize = 12.sp
+                )
+                Text(
+                    text = quitYears,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                )
+                Text(
+                    text = "목표시간",
+                    color = Color.Blue,
+                    fontSize = 12.sp
+                )
+                Text(
+                    text = goalYears,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                )
             }
         }
     }
+    Spacer(modifier = Modifier.height(30.dp))
 }
 
 @Composable
@@ -378,15 +357,13 @@ fun AnimatedRowGraph(label: String, value: Int, maxValue: Int, barColor: Color) 
                     .fillMaxWidth(animatedValue.value)
                     .background(barColor)
             )
+            Text(
+                text = "$value",
+                color = Color.Black,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(start = 8.dp)
+            )
         }
-
-        // 값 표시
-        Text(
-            text = "$value",
-            color = Color.White,
-            fontSize = 14.sp,
-            modifier = Modifier.padding(start = 8.dp)
-        )
     }
 }
 
