@@ -182,9 +182,6 @@ fun StatisticsScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text("아낀 시간", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Text("${SaveTime_D}", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Text("${SaveTime_S}", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Text("${SaveTime_G}", fontWeight = FontWeight.Bold, fontSize = 18.sp)
 
                     Spacer(modifier = Modifier.height(8.dp))
                     AnimatedRowGraph(label = "담배", value = SaveTime_D, maxValue = 200000, barColor = Color.Green)
