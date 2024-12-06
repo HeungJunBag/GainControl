@@ -1,8 +1,12 @@
 package com.heungjun.gaincontrol.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.SmokingRooms
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,7 +18,10 @@ import androidx.navigation.NavController
 import com.heungjun.gaincontrol.commonlayout.GradientBackground
 import com.heungjun.gaincontrol.viewmodel.AuthState
 import com.heungjun.gaincontrol.viewmodel.AuthViewModel
+import com.heungjun.gaincontrol.pages.GraphListScreen
+import com.heungjun.gaincontrol.pages.StatusCard
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomePage(
     modifier: Modifier = Modifier,
@@ -31,20 +38,27 @@ fun HomePage(
         }
     }
 
-    GradientBackground {
-        Column(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = "Home Page", fontSize = 32.sp)
+//    StatusCard(
+//        icon = Icons.Filled.SmokingRooms, // Material Design 아이콘
+//        statusTitle = "흡연",
+//        quitYears = "10일",
+//        goalYears = "100일"
+//    )
+
+//    GradientBackground {
+//        Column(
+//            modifier = modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.Center,
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+//            Text(text = "Home Page", fontSize = 32.sp)
 
 //        TextButton(onClick = {
 //            authViewModel.signout()
 //        }) {
 //            Text(text = "Sign out")
 //        }
-        }
-    }
+//        }
+//    }
 
 }
