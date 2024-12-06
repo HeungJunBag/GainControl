@@ -4,11 +4,15 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -16,6 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.heungjun.gaincontrol.components.LineChartComponent
+import com.heungjun.gaincontrol.commonlayout.GradientBackground
 import com.heungjun.gaincontrol.viewmodel.AuthViewModel
 import com.heungjun.gaincontrol.viewmodel.UserViewModel
 
@@ -27,97 +32,110 @@ fun HomePage(
 ) {
     val graphData = userViewModel.graphData.observeAsState()
 
-    // 스크롤 상태 추가
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // URL에서 이미지 로드
-        val imageUrl = "https://img.freepik.com/free-vector/people-celebrating-goal-achievement-flat-hand-drawn_23-2148825627.jpg?t=st=1733474173~exp=1733477773~hmac=8e33d752cefa533ab170bb34a52a7b62d51c4029c47052691a99fc83e226ad12&w=1380"
-        val painter = rememberAsyncImagePainter(model = imageUrl)
-
-        Image(
-            painter = painter,
-            contentDescription = "상단 이미지",
-            contentScale = ContentScale.Crop, // 이미지를 화면에 꽉 채우도록 설정
+    GradientBackground {
+        Column(
             modifier = Modifier
-                .fillMaxWidth() // 가로로 화면 전체를 채움
-                .height(200.dp) // 이미지 높이 설정
-        )
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // 상단 이미지
+            val imageUrl =
+                "https://img.freepik.com/free-vector/people-celebrating-goal-achievement-flat-hand-drawn_23-2148825627.jpg"
+            val painter = rememberAsyncImagePainter(model = imageUrl)
 
-        // 흡연 관련 그래프 (데이터가 있을 때만 제목과 그래프 표시)
-        if (graphData.value?.containsKey("smoking_savings") == true || graphData.value?.containsKey("smoking_time_saved") == true) {
-            Text("금연 통계", fontSize = 20.sp)
-            graphData.value?.get("smoking_savings")?.let { savings ->
-                LineChartComponent(
-                    label = "절약한 금액 (흡연)",
-                    data = savings,
-                    xAxisLabelCount = savings.size,
-                    yAxisLabel = "원",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp)
+            Image(
+                painter = painter,
+                contentDescription = "상단 이미지",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+            )
+
+            // 금연 통계
+            if (graphData.value?.containsKey("smoking_savings") == true || graphData.value?.containsKey("smoking_time_saved") == true) {
+                StatisticsCard(
+                    title = "금연 통계",
+                    graphData = graphData.value,
+                    keys = listOf("smoking_savings", "smoking_time_saved"),
+                    labels = listOf("절약한 금액 (흡연)", "절약한 시간 (흡연)"),
+                    units = listOf("원", "시간")
                 )
             }
-            graphData.value?.get("smoking_time_saved")?.let { timeSaved ->
-                LineChartComponent(
-                    label = "절약한 시간 (흡연)",
-                    data = timeSaved,
-                    xAxisLabelCount = timeSaved.size,
-                    yAxisLabel = "시간",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp)
+
+            // 금주 통계
+            if (graphData.value?.containsKey("drinking_savings") == true || graphData.value?.containsKey("drinking_time_saved") == true) {
+                StatisticsCard(
+                    title = "금주 통계",
+                    graphData = graphData.value,
+                    keys = listOf("drinking_savings", "drinking_time_saved"),
+                    labels = listOf("절약한 금액 (음주)", "절약한 시간 (음주)"),
+                    units = listOf("원", "시간")
+                )
+            }
+
+            // 게임 통계
+            if (graphData.value?.containsKey("gaming_time_saved") == true) {
+                StatisticsCard(
+                    title = "게임 통계",
+                    graphData = graphData.value,
+                    keys = listOf("gaming_time_saved"),
+                    labels = listOf("절약한 시간 (게임)"),
+                    units = listOf("시간")
                 )
             }
         }
+    }
+}
 
-        // 음주 관련 그래프 (데이터가 있을 때만 제목과 그래프 표시)
-        if (graphData.value?.containsKey("drinking_savings") == true || graphData.value?.containsKey("drinking_time_saved") == true) {
-            Text("금주 통계", fontSize = 20.sp)
-            graphData.value?.get("drinking_savings")?.let { savings ->
-                LineChartComponent(
-                    label = "절약한 금액 (음주)",
-                    data = savings,
-                    xAxisLabelCount = savings.size,
-                    yAxisLabel = "원",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp)
-                )
-            }
-            graphData.value?.get("drinking_time_saved")?.let { timeSaved ->
-                LineChartComponent(
-                    label = "절약한 시간 (음주)",
-                    data = timeSaved,
-                    xAxisLabelCount = timeSaved.size,
-                    yAxisLabel = "시간",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp)
-                )
-            }
-        }
+@Composable
+fun StatisticsCard(
+    title: String,
+    graphData: Map<String, List<Double>>?,
+    keys: List<String>,
+    labels: List<String>,
+    units: List<String>
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFDFF6DD) // 연한 초록색
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = title,
+                fontSize = 22.sp,
+                color = Color(0xFF3A7D44), // 짙은 초록색
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
 
-        // 게임 관련 그래프 (데이터가 있을 때만 제목과 그래프 표시)
-        if (graphData.value?.containsKey("gaming_time_saved") == true) {
-            Text("게임 통계", fontSize = 20.sp)
-            graphData.value?.get("gaming_time_saved")?.let { timeSaved ->
-                LineChartComponent(
-                    label = "절약한 시간 (게임)",
-                    data = timeSaved,
-                    xAxisLabelCount = timeSaved.size,
-                    yAxisLabel = "시간",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp)
-                )
+            keys.forEachIndexed { index, key ->
+                graphData?.get(key)?.let { data ->
+                    LineChartComponent(
+                        label = labels[index],
+                        data = data,
+                        xAxisLabelCount = data.size,
+                        yAxisLabel = units.getOrNull(index),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp)
+                    )
+                }
             }
         }
     }

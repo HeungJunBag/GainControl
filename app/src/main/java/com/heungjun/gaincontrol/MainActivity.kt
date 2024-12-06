@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.firebase.messaging.FirebaseMessaging
 import com.heungjun.gaincontrol.navigation.MyAppNavigation
 import com.heungjun.gaincontrol.ui.theme.GainControlTheme
@@ -22,6 +23,7 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
 
         // ThreeTenABP 초기화
         AndroidThreeTen.init(this)

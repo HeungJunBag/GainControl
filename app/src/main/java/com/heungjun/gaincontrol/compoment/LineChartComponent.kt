@@ -6,7 +6,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -29,11 +28,11 @@ fun LineChartComponent(
                 }
 
                 val dataSet = LineDataSet(entries, label).apply {
-                    color = Color.BLUE
+                    color = Color.parseColor("#4CAF50") // 선 색상: 초록색
                     valueTextColor = Color.BLACK
                     valueTextSize = 10f
                     lineWidth = 2f
-                    setCircleColor(Color.RED)
+                    setCircleColor(Color.parseColor("#388E3C")) // 포인트 색상: 진한 초록색
                     setDrawCircles(true)
                     setDrawValues(false) // 그래프 위에 값 표시 여부
                 }
@@ -45,6 +44,7 @@ fun LineChartComponent(
                 xAxis.apply {
                     position = XAxis.XAxisPosition.BOTTOM
                     setDrawGridLines(false)
+                    textColor = Color.parseColor("#4CAF50") // X축 라벨 색상: 초록색
                     granularity = 1f // 최소 간격
                     axisMinimum = 1f
                     axisMaximum = (xAxisLabelCount ?: data.size).toFloat() // 데이터 크기에 따라 설정
@@ -55,6 +55,8 @@ fun LineChartComponent(
                 // Y축 설정
                 axisLeft.apply {
                     setDrawGridLines(true)
+                    gridColor = Color.parseColor("#A5D6A7") // Y축 격자선 색상: 연한 초록색
+                    textColor = Color.parseColor("#388E3C") // Y축 라벨 색상: 진한 초록색
                     granularity = 1f // 최소 간격
                     textSize = 12f
                     if (yAxisLabel != null) {
@@ -67,7 +69,12 @@ fun LineChartComponent(
                 }
                 axisRight.isEnabled = false // 오른쪽 Y축 비활성화
 
-                legend.textSize = 12f // 범례 텍스트 크기
+                // 범례 설정
+                legend.textColor = Color.parseColor("#4CAF50") // 범례 텍스트 색상: 초록색
+                legend.textSize = 12f
+
+                setBackgroundColor(Color.parseColor("#E8F5E9")) // 그래프 배경색: 연한 초록색
+
                 invalidate() // 그래프 다시 그리기
             }
         },
