@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.heungjun.gaincontrol.commonlayout.GradientBackground
@@ -33,6 +34,7 @@ import com.heungjun.gaincontrol.pages.GraphListScreen
 import com.heungjun.gaincontrol.pages.Plan
 import com.heungjun.gaincontrol.pages.getDateKey
 import com.heungjun.gaincontrol.pages.sortPlanDetails
+import com.heungjun.gaincontrol.pages.updateAccumulatedData
 import com.heungjun.gaincontrol.viewmodel.AuthState
 import com.heungjun.gaincontrol.viewmodel.AuthViewModel
 import com.heungjun.gaincontrol.viewmodel.SharedViewModel
@@ -42,10 +44,15 @@ import java.util.Calendar
 @Composable
 fun StatisticsScreen(
     navController: NavController,
-    authViewModel: AuthViewModel = viewModel()
+    authViewModel: AuthViewModel = viewModel(),
+    sharedViewModel: SharedViewModel = viewModel() // 여기서 viewModel() 사용
 ) {
     val authState = authViewModel.authState.observeAsState()
-    val sharedViewModel = remember { SharedViewModel() }
+    val accumulatedData = remember { mutableStateMapOf<String, MutableMap<String, Int>>() }
+
+    val TotalDambe by sharedViewModel.totalDambe.observeAsState(0)
+    val TotalSoju by sharedViewModel.totalSoju.observeAsState(0)
+    val TotalGame by sharedViewModel.totalGame.observeAsState(0)
 
     // 로그인 상태 확인 후 리디렉션
     LaunchedEffect(authState.value) {
@@ -132,6 +139,44 @@ fun StatisticsScreen(
                         plans[dateKey] = mutableListOf()
                     }
                     plans[dateKey]?.add(Plan(category, details))
+
+                    // 누적 데이터 업데이트
+                    updateAccumulatedData(accumulatedData, category, details)
+
+                    // Total 값 업데이트
+                    when (category) {
+                        "담배" -> {
+                            val todayDambe = details.lines().find { it.startsWith("avgPacks:") }
+                                ?.split(":")
+                                ?.get(1)
+                                ?.trim()
+                                ?.toIntOrNull() ?: 0
+                            sharedViewModel.updateTotalDambe(todayDambe)
+                        }
+                        "술" -> {
+                            val todaySoju = details.lines().find { it.startsWith("estimatedAmount:") }
+                                ?.split(":")
+                                ?.get(1)
+                                ?.trim()
+                                ?.toIntOrNull() ?: 0
+                            sharedViewModel.updateTotalSoju(todaySoju)
+                        }
+                        "게임" -> {
+                            val startTime = details.lines().find { it.startsWith("startTime:") }
+                                ?.split(":")
+                                ?.get(1)
+                                ?.trim()
+                                ?.toIntOrNull() ?: 0
+                            val endTime = details.lines().find { it.startsWith("endTime:") }
+                                ?.split(":")
+                                ?.get(1)
+                                ?.trim()
+                                ?.toIntOrNull() ?: 0
+                            val todayGame = if (endTime > startTime) endTime - startTime else 0
+                            sharedViewModel.updateTotalGame(todayGame)
+                        }
+                    }
+
                     showInputDialog = false
                 }
             )
