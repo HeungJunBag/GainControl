@@ -24,10 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
 import com.heungjun.gaincontrol.commonlayout.GradientBackground
+import com.heungjun.gaincontrol.pages.AnimatedRowGraph
 import com.heungjun.gaincontrol.pages.CalendarScreen
 import com.heungjun.gaincontrol.pages.DetailedPlanInputDialog
 import com.heungjun.gaincontrol.pages.GraphListScreen
@@ -37,7 +40,11 @@ import com.heungjun.gaincontrol.pages.sortPlanDetails
 import com.heungjun.gaincontrol.pages.updateAccumulatedData
 import com.heungjun.gaincontrol.viewmodel.AuthState
 import com.heungjun.gaincontrol.viewmodel.AuthViewModel
+import com.heungjun.gaincontrol.viewmodel.HealthGoalsViewModel
 import com.heungjun.gaincontrol.viewmodel.SharedViewModel
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.Calendar
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -49,10 +56,42 @@ fun StatisticsScreen(
 ) {
     val authState = authViewModel.authState.observeAsState()
     val accumulatedData = remember { mutableStateMapOf<String, MutableMap<String, Int>>() }
+    val viewModel = HealthGoalsViewModel()
+
+    val auth = FirebaseAuth.getInstance()
+    val currentUser = auth.currentUser
+    val uid = currentUser?.uid
+
+    // 특정 UID로 데이터 가져오기
+    viewModel.fetchHealthGoalsData(uid.toString())
+
+    val today = LocalDate.now()
+    val creationDate = authViewModel.getAccountCreationDate()
+    val daysElapsed = ChronoUnit.DAYS.between(creationDate, today).toInt() //계정생성부터 지금까지
 
     val TotalDambe by sharedViewModel.totalDambe.observeAsState(0)
     val TotalSoju by sharedViewModel.totalSoju.observeAsState(0)
     val TotalGame by sharedViewModel.totalGame.observeAsState(0)
+
+
+    val smokingData = viewModel.smokingData.observeAsState()
+    val SperDay = smokingData.value?.perDay ?: 0
+
+    val drinkingData = viewModel.drinkingData.observeAsState()
+    val DperWeek = drinkingData.value?.perWeek ?: 0
+    val DperSession = drinkingData.value?.amountPerSession ?: 0
+
+    val gamingData = viewModel.gamingData.observeAsState()
+    val GperWeek = gamingData.value?.perWeek ?: 0
+    val Gperhour = gamingData.value?.hoursPerSession ?: 0
+
+    var SaveMoney_D = ((SperDay * daysElapsed - TotalDambe) * 225).coerceAtLeast(0)
+    var SaveMoney_S = ((((DperWeek * DperSession) * (daysElapsed/7)) - TotalSoju) * 5000).coerceAtLeast(0)
+    var SaveMoney_G = ((((GperWeek * Gperhour) * (daysElapsed)) - TotalGame) * 1500).coerceAtLeast(0)
+
+    var SaveTime_D = ((SperDay * daysElapsed - TotalDambe) * 7).coerceAtLeast(0)
+    var SaveTime_S = ((((DperWeek * DperSession) * (daysElapsed/7)) - TotalSoju) * 4).coerceAtLeast(0)
+    var SaveTime_G = (((GperWeek * Gperhour) * (daysElapsed)) - TotalGame).coerceAtLeast(0)
 
     // 로그인 상태 확인 후 리디렉션
     LaunchedEffect(authState.value) {
@@ -63,7 +102,6 @@ fun StatisticsScreen(
         }
     }
 
-    // State variables for calendar and plans
     var selectedDate by remember { mutableStateOf(Calendar.getInstance()) }
     val plans = remember { mutableStateMapOf<String, MutableList<Plan>>() }
     var showInputDialog by remember { mutableStateOf(false) }
@@ -125,7 +163,35 @@ fun StatisticsScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 그래프 영역 추가
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("아낀 돈", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    AnimatedRowGraph(label = "담배", value = SaveMoney_D, maxValue = 2000000, barColor = Color.Green)
+                    AnimatedRowGraph(label = "술", value = SaveMoney_S, maxValue = 2000000, barColor = Color.Blue)
+                    AnimatedRowGraph(label = "게임", value = SaveMoney_G, maxValue = 2000000, barColor = Color.Yellow)
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text("아낀 시간", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text("${SaveTime_D}", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text("${SaveTime_S}", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text("${SaveTime_G}", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                    AnimatedRowGraph(label = "담배", value = SaveTime_D, maxValue = 200000, barColor = Color.Green)
+                    AnimatedRowGraph(label = "술", value = SaveTime_S, maxValue = 200000 , barColor = Color.Blue)
+                    AnimatedRowGraph(label = "게임", value = SaveTime_G, maxValue = 200000, barColor = Color.Yellow)
+                }}
+
             GraphListScreen(sharedViewModel = sharedViewModel, onAddClicked = {})
         }
 

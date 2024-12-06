@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.heungjun.gaincontrol.models.UserHabits
@@ -37,14 +38,12 @@ import com.heungjun.gaincontrol.viewmodel.HealthGoalsViewModel
 import com.heungjun.gaincontrol.viewmodel.SharedViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import com.heungjun.gaincontrol.viewmodel.AuthViewModel
 import java.time.temporal.ChronoUnit
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun GraphListScreen(sharedViewModel: SharedViewModel, onAddClicked: () -> Unit) {
-    val totalDambe by sharedViewModel.totalDambe.observeAsState(0)
-    val totalSoju by sharedViewModel.totalSoju.observeAsState(0)
-    val totalGame by sharedViewModel.totalGame.observeAsState(0)
+fun GraphListScreen(sharedViewModel: SharedViewModel, authViewModel: AuthViewModel = viewModel(), onAddClicked: () -> Unit) {
 
     val viewModel = HealthGoalsViewModel()
 
@@ -54,6 +53,8 @@ fun GraphListScreen(sharedViewModel: SharedViewModel, onAddClicked: () -> Unit) 
 
     // 특정 UID로 데이터 가져오기
     viewModel.fetchHealthGoalsData(uid.toString())
+
+    val creationDate = authViewModel.getAccountCreationDate()
 
     val smokingData = viewModel.smokingData.observeAsState()
     val drinkingData = viewModel.drinkingData.observeAsState()
@@ -71,16 +72,16 @@ fun GraphListScreen(sharedViewModel: SharedViewModel, onAddClicked: () -> Unit) 
         ) {
             Spacer(modifier = Modifier.height(20.dp))
 
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("누적 데이터 요약", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Spacer(modifier = Modifier.height(8.dp))
-                AnimatedRowGraph(label = "담배", value = totalDambe, maxValue = 100, barColor = Color.Green)
-                AnimatedRowGraph(label = "술", value = totalSoju, maxValue = 100, barColor = Color.Blue)
-                AnimatedRowGraph(label = "게임", value = totalGame, maxValue = 100, barColor = Color.Yellow)
-            }
+//            Column(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                Text("누적 데이터 요약", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+//                Spacer(modifier = Modifier.height(8.dp))
+//                AnimatedRowGraph(label = "담배", value = totalDambe.toInt(), maxValue = 100, barColor = Color.Green)
+//                AnimatedRowGraph(label = "술", value = totalSoju.toInt(), maxValue = 100, barColor = Color.Blue)
+//                AnimatedRowGraph(label = "게임", value = totalGame.toInt(), maxValue = 100, barColor = Color.Yellow)
+//            }
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -94,9 +95,9 @@ fun GraphListScreen(sharedViewModel: SharedViewModel, onAddClicked: () -> Unit) 
             ) {
                 // 흡연 데이터
                 smokingData.value?.let { data ->
-                    val startDate = LocalDate.parse(data.startDate, DateTimeFormatter.ISO_LOCAL_DATE)
+                    val creationDate = authViewModel.getAccountCreationDate()
                     val today = LocalDate.now()
-                    val daysElapsed = ChronoUnit.DAYS.between(startDate, today).toInt()
+                    val daysElapsed = ChronoUnit.DAYS.between(creationDate, today).toInt()
                     val goalDate = data.goalYears * 365
 
                     Column(
@@ -125,9 +126,9 @@ fun GraphListScreen(sharedViewModel: SharedViewModel, onAddClicked: () -> Unit) 
 
                 // 음주 데이터
                 drinkingData.value?.let { data ->
-                    val startDate = LocalDate.parse(data.startDate, DateTimeFormatter.ISO_LOCAL_DATE)
+                    val creationDate = authViewModel.getAccountCreationDate()
                     val today = LocalDate.now()
-                    val daysElapsed = ChronoUnit.DAYS.between(startDate, today).toInt()
+                    val daysElapsed = ChronoUnit.DAYS.between(creationDate, today).toInt()
                     val goalDate = data.goalYears * 365
 
                     Column(
@@ -156,9 +157,9 @@ fun GraphListScreen(sharedViewModel: SharedViewModel, onAddClicked: () -> Unit) 
 
                 // 게임 데이터
                 gamingData.value?.let { data ->
-                    val startDate = LocalDate.parse(data.startDate, DateTimeFormatter.ISO_LOCAL_DATE)
+                    val creationDate = authViewModel.getAccountCreationDate()
                     val today = LocalDate.now()
-                    val daysElapsed = ChronoUnit.DAYS.between(startDate, today).toInt()
+                    val daysElapsed = ChronoUnit.DAYS.between(creationDate, today).toInt()
                     val goalDate = data.goalYears * 365
 
                     Column(
@@ -341,7 +342,8 @@ fun AnimatedRowGraph(label: String, value: Int, maxValue: Int, barColor: Color) 
 
     val animatedValue = remember1 { Animatable(0f) }
 
-    LaunchedEffect(Unit) {
+
+    LaunchedEffect(value) {
         animatedValue.animateTo(
             targetValue = value.toFloat() / maxValue,
             animationSpec = tween(durationMillis = 1000)

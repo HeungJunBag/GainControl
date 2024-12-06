@@ -383,7 +383,7 @@ fun DetailedPlanInputDialog(onDismiss: () -> Unit, onSave: (String, String) -> U
                 when (selectedCategory) {
                     "담배" -> {
                         TextFieldWithLabel(
-                            label = "하루에 평균 몇갑 피우시나요?",
+                            label = "하루에 몇 개비 피우셨나요?",
                             value = inputValues["avgPacks"] ?: "",
                             onValueChange = { inputValues["avgPacks"] = it }
                         )
@@ -526,7 +526,7 @@ fun translateKeyToKorean(detail: String): String {
         detail.startsWith("startTime:") -> detail.replace("startTime:", "시작 시간:")
         detail.startsWith("endTime:") -> detail.replace("endTime:", "종료 시간:")
         detail.startsWith("weeklyPlay:") -> detail.replace("weeklyPlay:", "주간 플레이 시간:")
-        detail.startsWith("avgPacks:") -> detail.replace("avgPacks:", "평균 담배 갑 수:")
+        detail.startsWith("avgPacks:") -> detail.replace("avgPacks:", "핀 담배 개비 수:")
         detail.startsWith("dailyTime:") -> detail.replace("dailyTime:", "하루 소비 시간:")
         detail.startsWith("weeklyCost:") -> detail.replace("weeklyCost:", "주간 비용:")
         detail.startsWith("estimatedAmount:") -> detail.replace("estimatedAmount:", "예상 주량:")
