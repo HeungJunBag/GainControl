@@ -28,14 +28,18 @@ fun DetailedCalendarApp() {
     var selectedDate by remember { mutableStateOf(Calendar.getInstance()) }
     var showInputDialog by remember { mutableStateOf(false) }
     val plans = remember { mutableStateMapOf<String, MutableList<Plan>>() }
+    val accumulatedData = remember { mutableStateMapOf<String, MutableMap<String, Int>>() }
 
-    // 스크롤 상태 기억
+    var TotalDambe by remember { mutableStateOf(0) }
+    var TotalSoju by remember { mutableStateOf(0) }
+    var TotalGame by remember { mutableStateOf(0) }
+
     val scrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(scrollState) // 스크롤 가능
+            .verticalScroll(scrollState)
     ) {
         // 캘린더 화면
         CalendarScreen(
@@ -44,7 +48,7 @@ fun DetailedCalendarApp() {
                 selectedDate = newDate
                 showInputDialog = true
             },
-            plans = plans // 추가: 일정 데이터 전달
+            plans = plans
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -75,6 +79,18 @@ fun DetailedCalendarApp() {
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Total 값 표시
+            Text(
+                text = "누적 총합 데이터",
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Text(text = "총 담배 수: $TotalDambe", modifier = Modifier.padding(vertical = 4.dp))
+            Text(text = "총 예상 주량: $TotalSoju", modifier = Modifier.padding(vertical = 4.dp))
+            Text(text = "총 게임 시간: $TotalGame 시간", modifier = Modifier.padding(vertical = 4.dp))
         }
     }
 
@@ -88,11 +104,77 @@ fun DetailedCalendarApp() {
                     plans[dateKey] = mutableListOf()
                 }
                 plans[dateKey]?.add(Plan(category, details))
+
+                // 누적 데이터 업데이트
+                updateAccumulatedData(accumulatedData, category, details)
+
+                // Total 값 업데이트
+                when (category) {
+                    "담배" -> {
+                        val todayDambe = details.lines().find { it.startsWith("avgPacks:") }
+                            ?.split(":")
+                            ?.get(1)
+                            ?.trim()
+                            ?.toIntOrNull() ?: 0
+                        TotalDambe += todayDambe
+                    }
+                    "술" -> {
+                        val todaySoju = details.lines().find { it.startsWith("estimatedAmount:") }
+                            ?.split(":")
+                            ?.get(1)
+                            ?.trim()
+                            ?.toIntOrNull() ?: 0
+                        TotalSoju += todaySoju
+                    }
+                    "게임" -> {
+                        val startTime = details.lines().find { it.startsWith("startTime:") }
+                            ?.split(":")
+                            ?.get(1)
+                            ?.trim()
+                            ?.toIntOrNull() ?: 0
+                        val endTime = details.lines().find { it.startsWith("endTime:") }
+                            ?.split(":")
+                            ?.get(1)
+                            ?.trim()
+                            ?.toIntOrNull() ?: 0
+                        val todayGame = if (endTime > startTime) endTime - startTime else 0
+                        TotalGame += todayGame
+                    }
+                }
+
                 showInputDialog = false
             }
         )
     }
 }
+
+
+fun updateAccumulatedData(
+    accumulatedData: MutableMap<String, MutableMap<String, Int>>,
+    category: String,
+    details: String
+) {
+    // 세부 정보를 Map으로 변환
+    val detailMap = details.lines()
+        .mapNotNull { line ->
+            val parts = line.split(":").map { it.trim() }
+            if (parts.size == 2) {
+                val key = parts[0]
+                val value = parts[1].toIntOrNull() // 숫자만 처리
+                if (value != null) key to value else null
+            } else null
+        }.toMap()
+
+    // 카테고리에 해당하는 누적 데이터 가져오기 (없으면 생성)
+    val categoryData = accumulatedData.getOrPut(category) { mutableMapOf() }
+
+    // 누적 데이터를 업데이트
+    detailMap.forEach { (key, value) ->
+        categoryData[key] = categoryData.getOrDefault(key, 0) + value
+    }
+}
+
+
 
 @Composable
 fun CalendarScreen(
@@ -351,4 +433,5 @@ fun getDateKey(date: Calendar): String {
 fun PreviewDetailedCalendarApp() {
     DetailedCalendarApp()
 }
+
 
