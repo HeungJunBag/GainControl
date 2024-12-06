@@ -9,6 +9,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -20,7 +23,7 @@ import com.heungjun.gaincontrol.MainActivity
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     companion object {
-        private const val CHANNEL_ID = "firebase_channel"
+        const val CHANNEL_ID = "firebase_channel"
     }
 
     override fun onNewToken(token: String) {
@@ -39,10 +42,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val category = remoteMessage.data["category"] ?: "default"
 
         // 알림 표시
-        showNotification(title, body, category)
+        showNotification(title, body, category,this)
     }
 
-    private fun showNotification(title: String, body: String, category: String) {
+    private fun showNotification(
+        title: String,
+        body: String,
+        category: String,
+        context: Context
+    ) {
         // 채널 생성(Android 8.0 이상)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -53,33 +61,52 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 description = "Firebase Notifications"
             }
             val notificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
 
-        val intent = Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        val remoteInput = androidx.core.app.RemoteInput.Builder("key_text_reply")
+            .setLabel("Reply here")
+            .build()
+
+        val replyIntent = Intent(context, ReplyReceiver::class.java).apply {
+            putExtra("category", category)
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(
-            this, 0, intent, PendingIntent.FLAG_IMMUTABLE
+        val replyPendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            replyIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+        val replyAction = NotificationCompat.Action.Builder(
+            android.R.drawable.ic_menu_send,
+            "Reply",
+            replyPendingIntent
+        ).addRemoteInput(remoteInput).build()
+
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle(title)
             .setContentText(body)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent)
+            .addAction(replyAction)
             .setAutoCancel(true)
             .build()
 
         if (ActivityCompat.checkSelfPermission(
-                this,
+                context,
                 Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             return
         }
-        NotificationManagerCompat.from(this).notify(category.hashCode(), notification)
+
+        NotificationManagerCompat.from(context).notify(category.hashCode(), notification)
     }
+
+
 }
+
+
+
