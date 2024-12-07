@@ -89,6 +89,7 @@ fun HomePage(
                     units = listOf("시간")
                 )
             }
+            Spacer(modifier = Modifier.height(25.dp))
         }
     }
 }
