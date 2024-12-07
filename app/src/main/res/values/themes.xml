@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<style name="Theme.MySplashScreen" parent="Theme.SplashScreen">
-    <item name="windowSplashScreenAnimatedIcon">
-        @drawable/addiction
-    </item>
-    <item name="postSplashScreenTheme">@style/Theme.MySplashScreen</item>
-</style>
+    <style name="Theme.MySplashScreen" parent="Theme.SplashScreen">
+        <!-- Splash screen background color -->
+        <item name="windowSplashScreenBackground">@android:color/holo_green_light</item>
+
+        <!-- Use the layer list drawable as the splash screen animated icon -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/success</item>
+
+
+        <!-- Post splash screen theme -->
+        <item name="postSplashScreenTheme">@style/Theme.GainControl</item>
+    </style>
 
     <style name="Theme.GainControl" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>
