@@ -238,7 +238,7 @@ fun CircularProgressBar(
 
         // 진행도
         drawArc(
-            color = color,
+            color = Color.Green,
             startAngle = startAngle,
             sweepAngle = progress * 360,
             useCenter = false,
