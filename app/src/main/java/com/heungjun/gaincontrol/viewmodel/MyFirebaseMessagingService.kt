@@ -42,7 +42,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val category = remoteMessage.data["category"] ?: "default"
 
         // 알림 표시
-        showNotification(title, body, category,this)
+        showNotification(title, body, category, this)
     }
 
     private fun showNotification(
@@ -72,11 +72,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val replyIntent = Intent(context, ReplyReceiver::class.java).apply {
             putExtra("category", category)
         }
+
+        // 수정된 부분: FLAG_MUTABLE로 변경
         val replyPendingIntent = PendingIntent.getBroadcast(
             context,
             0,
             replyIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE // FLAG_MUTABLE로 수정
         )
 
         val replyAction = NotificationCompat.Action.Builder(
@@ -94,18 +96,18 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setAutoCancel(true)
             .build()
 
+        // 권한 체크 후 알림 보내기
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
+            // 권한이 없으면 리턴
             return
         }
 
         NotificationManagerCompat.from(context).notify(category.hashCode(), notification)
     }
-
-
 }
 
 
