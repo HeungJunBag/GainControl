@@ -78,6 +78,9 @@ class AuthViewModel : ViewModel() {
             onComplete(false)
         }
     }
+    fun getUserEmail(): String {
+        return auth.currentUser?.email ?: "사용자 아이디"
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getAccountCreationDate(): LocalDate? {
@@ -86,8 +89,8 @@ class AuthViewModel : ViewModel() {
         val date = Date(creationTimestamp)
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
     }
-
 }
+
 
 sealed class AuthState {
     object Authenticated : AuthState()

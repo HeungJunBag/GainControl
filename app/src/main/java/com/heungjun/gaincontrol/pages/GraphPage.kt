@@ -8,6 +8,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material.icons.filled.SmokingRooms
 import androidx.compose.material.icons.filled.VideogameAsset
 import androidx.compose.material3.Icon
@@ -132,7 +133,7 @@ fun GraphListScreen(sharedViewModel: SharedViewModel, authViewModel: AuthViewMod
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         StatusCard(
-                            icon = Icons.Filled.VideogameAsset,
+                            icon = Icons.Filled.LocalBar,
                             statusTitle = "음주",
                             quitYears = "$daysElapsed 일",
                             goalYears = "$goalDate 일"
@@ -255,12 +256,11 @@ fun StatusCard(
     statusTitle: String,
     quitYears: String,
     goalYears: String,
-    backgroundColor: Color = Color.LightGray,
+    backgroundColor: Color = Color.Blue,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
-            .background(backgroundColor)
             .padding(16.dp)
             .sizeIn(minHeight = 120.dp)
     ) {
@@ -290,7 +290,7 @@ fun StatusCard(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = "금욕시간",
-                    color = Color.Blue,
+                    color = Color(0xFFA7D477),
                     fontSize = 12.sp
                 )
                 Text(
@@ -301,7 +301,7 @@ fun StatusCard(
                 )
                 Text(
                     text = "목표시간",
-                    color = Color.Blue,
+                    color = Color(0xFFA7D477),
                     fontSize = 12.sp
                 )
                 Text(
