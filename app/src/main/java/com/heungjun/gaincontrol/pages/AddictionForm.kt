@@ -20,13 +20,14 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.heungjun.gaincontrol.viewmodel.AuthViewModel
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.ChronoUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddictionForm(navController: NavController) {
+fun AddictionForm(navController: NavController, authViewModel: AuthViewModel) {
     // 각 카테고리 선택 여부
     var isSmokingSelected by remember { mutableStateOf(false) }
     var isGamingSelected by remember { mutableStateOf(false) }
@@ -393,5 +394,5 @@ fun AddictionFormPreview() {
     val navController = rememberNavController() // 더미 NavController를 사용하여 프리뷰 가능
 
     // AddictionForm 호출
-    AddictionForm(navController = navController)
+    AddictionForm(navController = navController, authViewModel = AuthViewModel())
 }

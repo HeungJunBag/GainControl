@@ -38,7 +38,11 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel)
             )
         }
         composable("addiction_form") {
-            AddictionForm(navController = navController)
+            // 여기서 AuthViewModel 객체를 전달
+            AddictionForm(
+                navController = navController,
+                authViewModel = authViewModel // 수정된 부분
+            )
         }
         composable("home") {
             MainScreen(
